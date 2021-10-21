@@ -1,0 +1,24 @@
+{
+  "name": "sink",
+  "version": "1.0.0",
+  "description": "Helper scripts for The Michigan Daily",
+  "main": "src/sink.js",
+  "bin": {
+      "sink": "src/sink.js"
+  },
+  "repository": "https://github.com/MichiganDaily/sink",
+  "author": "Naitian Zhou",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "archieml": "^0.4.2",
+    "chalk": "^4.1.2",
+    "commander": "^8.2.0",
+    "d3": "^7.1.1",
+    "find-up": "^6.2.0",
+    "googleapis": "^89.0.0",
+    "html-entities": "^2.3.2",
+    "htmlparser2": "^7.1.2"
+  }
+}
