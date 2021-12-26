@@ -1,0 +1,28 @@
+{
+  "hed": "Headline",
+  "dek": "Description",
+  "byline": "Name",
+  "source": "Source: The Michigan Daily",
+
+  "deployment": "https://datagraphics.michigandaily.com",
+
+  "ga_id": "",
+
+  "render": {
+    "srcDir": "./src/",
+    "buildDir": "./build/"
+  },
+  "fetch": [
+    {
+      "id": "",
+      "output": "",
+      "auth": "./auth.json"
+    },
+    {
+      "id": "",
+      "sheetId": "0",
+      "output": "",
+      "auth": "./auth.json"
+    }
+  ]
+}
