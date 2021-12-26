@@ -105,23 +105,25 @@ const parse = (file) => {
   });
 };
 
+const fetchDoc = ({ id, output, auth }) => {
+  const authObject = new google.auth.GoogleAuth({
+    keyFile: auth,
+    scopes: ["https://www.googleapis.com/auth/drive"],
+  });
+  const drive = google.drive({ version: "v3", auth: authObject });
+  drive.files
+    .export({ fileId: id, mimeType: "text/html" })
+    .then(parse)
+    .then((res) => writeFileSync(output, JSON.stringify(res)))
+    .then(() => success(`Wrote output to ${output}`))
+    .catch(console.error);
+};
+
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
 
-  const files = config.fetch.filter((d) => d.sheetId === null);
-  files.forEach(({ id, output, auth }) => {
-    const authObject = new google.auth.GoogleAuth({
-      auth,
-      scopes: ["https://www.googleapis.com/auth/drive"],
-    });
-    const drive = google.drive({ version: "v3", auth: authObject });
-    drive.files
-      .export({ fileId: id, mimeType: "text/html" })
-      .then(parse)
-      .then((res) => writeFileSync(output, JSON.stringify(res)))
-      .then(() => success(`Wrote output to ${output}`))
-      .catch(console.error);
-  });
+  const files = config.fetch.filter((d) => d.sheetId == null);
+  files.forEach(fetchDoc);
 };
 
 program
