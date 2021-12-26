@@ -21,14 +21,7 @@ const parse = (res) => {
   return csvFormat(csv, headers);
 };
 
-async function main(opts) {
-  const { config } = await load_config(opts.config);
-
-  const spreadsheetId = config.fetch.sheets.id;
-  const sheetId = config.fetch.sheets.sheetId;
-  const output = config.fetch.sheets.output;
-  const keyFile = config.fetch.sheets.auth;
-
+const fetchSheet = ({ id, sheetId, output, auth }) => {
   if (!existsSync(keyFile)) {
     fatal_error(`
   Could not open service account credentials at ${keyFile}.
@@ -37,17 +30,17 @@ async function main(opts) {
   }
 
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
-  const auth = new google.auth.GoogleAuth({keyFile, scopes})
+  const authObject = new google.auth.GoogleAuth({ keyFile: auth, scopes });
 
-  const sheet = google.sheets({ version: "v4", auth });
+  const sheet = google.sheets({ version: "v4", auth: authObject });
   const gidQ = await sheet.spreadsheets.getByDataFilter({
-    spreadsheetId: spreadsheetId,
+    spreadsheetId: id,
     fields: "sheets(properties(title))",
     requestBody: { dataFilters: [{ gridRange: { sheetId: sheetId } }] },
   });
 
   const nameQ = await sheet.spreadsheets.values.get({
-    spreadsheetId: spreadsheetId,
+    spreadsheetId: id,
     range: `'${gidQ.data.sheets.pop().properties.title}'`,
   });
 
@@ -56,10 +49,17 @@ async function main(opts) {
   const dir = output.substring(0, output.lastIndexOf("/"));
   !existsSync(dir) && mkdirSync(dir, { recursive: true });
   writeFileSync(output, csv);
-  success(`Wrote output to ${output}`)
+  success(`Wrote output to ${output}`);
+};
+
+async function main(opts) {
+  const { config } = await load_config(opts.config);
+  const files = config.fetch.filter(d => d.sheetId !== undefined)
+  files.forEach(fetchSheet)
 }
 
-program.version("1.0.0")
+program
+  .version("1.0.0")
   .option("-c, --config <path>", "path to config file")
   .parse();
 
