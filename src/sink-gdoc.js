@@ -8,7 +8,7 @@
 // const config = fs.readFileSync(env.CONFIG_PATH)
 import { program } from "commander/esm.mjs";
 
-import { load_config, success } from "./_utils.js";
+import { load_config, success, get_auth } from "./_utils.js";
 import { google } from "googleapis";
 import { writeFileSync } from "fs";
 import { decode } from "html-entities";
@@ -106,10 +106,7 @@ const parse = (file) => {
 };
 
 const fetchDoc = ({ id, output, auth }) => {
-  const authObject = new google.auth.GoogleAuth({
-    keyFile: auth,
-    scopes: ["https://www.googleapis.com/auth/drive"],
-  });
+  const authObject = get_auth(auth, ["https://www.googleapis.com/auth/drive"])
   const drive = google.drive({ version: "v3", auth: authObject });
   drive.files
     .export({ fileId: id, mimeType: "text/html" })

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { load_config, fatal_error, success } from "./_utils.js";
+import { load_config, fatal_error, success, get_auth } from "./_utils.js";
 import { program } from "commander/esm.mjs";
 import { google } from "googleapis";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
@@ -21,16 +21,10 @@ const parse = (res) => {
   return csvFormat(csv, headers);
 };
 
-const fetchSheet = ({ id, sheetId, output, auth }) => {
-  if (!existsSync(keyFile)) {
-    fatal_error(`
-  Could not open service account credentials at ${keyFile}.
-  Reconfigure fetch.sheets.auth in config.json or download the credentials file.
-  `);
-  }
-
+const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
-  const authObject = new google.auth.GoogleAuth({ keyFile: auth, scopes });
+  const authObject = get_auth(auth, scopes)
+
 
   const sheet = google.sheets({ version: "v4", auth: authObject });
   const gidQ = await sheet.spreadsheets.getByDataFilter({

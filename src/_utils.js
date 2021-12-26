@@ -20,3 +20,15 @@ export const fatal_error = (message) => {
 export const success = (message) => {
   console.log(chalk.green(message))
 }
+
+export const get_auth = (auth, scopes) => {
+  if (!existsSync(auth)) {
+    fatal_error(`
+  Could not open service account credentials at ${auth}.
+  Reconfigure fetch.sheets.auth in config.json or download the credentials file.
+  `);
+  }
+
+  const authObject = new google.auth.GoogleAuth({ keyFile: auth, scopes });
+  return authObject
+}
