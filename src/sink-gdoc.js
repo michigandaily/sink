@@ -105,7 +105,7 @@ const parse = (file) => {
   });
 };
 
-const fetchDoc = ({ id, output, auth }) => {
+export const fetchDoc = ({ id, output, auth }) => {
   const authObject = get_auth(auth, ["https://www.googleapis.com/auth/drive"])
   const drive = google.drive({ version: "v3", auth: authObject });
   drive.files

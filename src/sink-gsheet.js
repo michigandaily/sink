@@ -21,7 +21,7 @@ const parse = (res) => {
   return csvFormat(csv, headers);
 };
 
-const fetchSheet = async ({ id, sheetId, output, auth }) => {
+export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
   const authObject = get_auth(auth, scopes)
 
