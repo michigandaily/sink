@@ -1,7 +1,7 @@
 // Search directory for configuration file
 import chalk from "chalk";
 import { findUp } from "find-up";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 
 export const load_config = async (configFile="config.json") => {
   try {
