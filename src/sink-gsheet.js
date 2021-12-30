@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { load_config, fatal_error, success, get_auth } from "./_utils.js";
+import { load_config, success, get_auth } from "./_utils.js";
 import { program } from "commander/esm.mjs";
 import { google } from "googleapis";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
