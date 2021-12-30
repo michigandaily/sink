@@ -8,7 +8,7 @@
 // const config = fs.readFileSync(env.CONFIG_PATH)
 import { program } from "commander/esm.mjs";
 
-import { load_config, success } from "./_utils.js";
+import { load_config, success, get_auth } from "./_utils.js";
 import { google } from "googleapis";
 import { writeFileSync } from "fs";
 import { decode } from "html-entities";
@@ -105,25 +105,22 @@ const parse = (file) => {
   });
 };
 
+export const fetchDoc = ({ id, output, auth }) => {
+  const authObject = get_auth(auth, ["https://www.googleapis.com/auth/drive"])
+  const drive = google.drive({ version: "v3", auth: authObject });
+  drive.files
+    .export({ fileId: id, mimeType: "text/html" })
+    .then(parse)
+    .then((res) => writeFileSync(output, JSON.stringify(res)))
+    .then(() => success(`Wrote output to ${output}`))
+    .catch(console.error);
+};
+
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
 
-  const fileId = config.fetch.archie.id;
-  const archieOutput = config.fetch.archie.output;
-  const keyFile = config.fetch.archie.auth;
-
-  const auth = new google.auth.GoogleAuth({
-    keyFile,
-    scopes: ["https://www.googleapis.com/auth/drive"],
-  });
-
-  const drive = google.drive({ version: "v3", auth });
-  drive.files
-    .export({ fileId: fileId, mimeType: "text/html" })
-    .then(parse)
-    .then((res) => writeFileSync(archieOutput, JSON.stringify(res)))
-    .then(() => success(`Wrote output to ${archieOutput}`))
-    .catch(console.error);
+  const files = config.fetch.filter((d) => d.sheetId == null);
+  files.forEach(fetchDoc);
 };
 
 program
