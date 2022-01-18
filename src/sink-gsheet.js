@@ -2,7 +2,7 @@
 
 import { load_config, success, get_auth } from "./_utils.js";
 import { program } from "commander/esm.mjs";
-import { google } from "googleapis";
+import { sheets } from "@googleapis/sheets";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { csvFormat } from "d3-dsv";
 
@@ -26,7 +26,7 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const authObject = get_auth(auth, scopes)
 
 
-  const sheet = google.sheets({ version: "v4", auth: authObject });
+  const sheet = sheets({ version: "v4", auth: authObject });
   const gidQ = await sheet.spreadsheets.getByDataFilter({
     spreadsheetId: id,
     fields: "sheets(properties(title))",

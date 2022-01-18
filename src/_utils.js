@@ -1,10 +1,10 @@
 // Search directory for configuration file
 import chalk from "chalk";
-import { google } from "googleapis";
+import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
 import { existsSync, readFileSync } from "fs";
 
-export const load_config = async (configFile="config.json") => {
+export const load_config = async (configFile = "config.json") => {
   try {
     const path = await findUp(configFile);
     return { config: JSON.parse(readFileSync(path)) };
@@ -30,6 +30,6 @@ export const get_auth = (auth, scopes) => {
   `);
   }
 
-  const authObject = new google.auth.GoogleAuth({ keyFile: auth, scopes });
+  const authObject = new GoogleAuth({ keyFile: auth, scopes });
   return authObject
 }
