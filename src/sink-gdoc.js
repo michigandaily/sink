@@ -9,7 +9,7 @@
 import { program } from "commander/esm.mjs";
 
 import { load_config, success, get_auth } from "./_utils.js";
-import { google } from "googleapis";
+import { drive } from "@googleapis/drive";
 import { writeFileSync } from "fs";
 import { decode } from "html-entities";
 
@@ -107,8 +107,8 @@ const parse = (file) => {
 
 export const fetchDoc = ({ id, output, auth }) => {
   const authObject = get_auth(auth, ["https://www.googleapis.com/auth/drive"])
-  const drive = google.drive({ version: "v3", auth: authObject });
-  drive.files
+  const gdrive = drive({ version: "v3", auth: authObject });
+  gdrive.files
     .export({ fileId: id, mimeType: "text/html" })
     .then(parse)
     .then((res) => writeFileSync(output, JSON.stringify(res)))

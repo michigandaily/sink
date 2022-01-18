@@ -12,12 +12,14 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@googleapis/drive": "^2.1.0",
+    "@googleapis/sheets": "^0.3.0",
     "archieml": "^0.5.0",
     "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "d3-dsv": "^3.0.1",
     "find-up": "^6.2.0",
-    "googleapis": "^89.0.0",
+    "google-auth-library": "^7.11.0",
     "html-entities": "^2.3.2",
     "htmlparser2": "^7.1.2"
   }
