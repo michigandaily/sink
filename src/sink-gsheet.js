@@ -23,8 +23,7 @@ const parse = (res) => {
 
 export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
-  const authObject = get_auth(auth, scopes)
-
+  const authObject = get_auth(auth, scopes);
 
   const sheet = sheets({ version: "v4", auth: authObject });
   const gidQ = await sheet.spreadsheets.getByDataFilter({
