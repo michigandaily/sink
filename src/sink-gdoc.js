@@ -115,14 +115,13 @@ export const fetchDoc = async ({ id, output, auth }) => {
   const json = await parse(file);
 
   const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync(dir) && mkdirSync(dir, { recursive: true });
-  writeFileSync(output, json);
+  !existsSync((dir.length > 0) ? dir : ".") && mkdirSync(dir, { recursive: true });
+  writeFileSync(output, JSON.stringify(json));
   success(`Wrote output to ${output}`);
 };
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-
   const files = config.fetch.filter((d) => d.sheetId == null);
   files.forEach(fetchDoc);
 };

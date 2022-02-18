@@ -40,7 +40,7 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const csv = parse(nameQ);
 
   const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync(dir) && mkdirSync(dir, { recursive: true });
+  !existsSync((dir.length > 0) ? dir : ".") && mkdirSync(dir, { recursive: true });
   writeFileSync(output, csv);
   success(`Wrote output to ${output}`);
 };
