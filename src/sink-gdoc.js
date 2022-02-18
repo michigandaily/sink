@@ -10,7 +10,7 @@ import { program } from "commander/esm.mjs";
 
 import { load_config, success, get_auth } from "./_utils.js";
 import { drive } from "@googleapis/drive";
-import { writeFileSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { decode } from "html-entities";
 
 import archieml from "archieml";
