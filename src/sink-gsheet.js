@@ -23,8 +23,7 @@ const parse = (res) => {
 
 export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
-  const authObject = get_auth(auth, scopes)
-
+  const authObject = get_auth(auth, scopes);
 
   const sheet = sheets({ version: "v4", auth: authObject });
   const gidQ = await sheet.spreadsheets.getByDataFilter({
@@ -41,7 +40,7 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const csv = parse(nameQ);
 
   const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync(dir) && mkdirSync(dir, { recursive: true });
+  !existsSync((dir.length > 0) ? dir : ".") && mkdirSync(dir, { recursive: true });
   writeFileSync(output, csv);
   success(`Wrote output to ${output}`);
 };

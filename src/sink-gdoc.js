@@ -10,7 +10,7 @@ import { program } from "commander/esm.mjs";
 
 import { load_config, success, get_auth } from "./_utils.js";
 import { drive } from "@googleapis/drive";
-import { writeFileSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { decode } from "html-entities";
 
 import archieml from "archieml";
@@ -105,20 +105,23 @@ const parse = (file) => {
   });
 };
 
-export const fetchDoc = ({ id, output, auth }) => {
-  const authObject = get_auth(auth, ["https://www.googleapis.com/auth/drive"])
+export const fetchDoc = async ({ id, output, auth }) => {
+  const scopes = ["https://www.googleapis.com/auth/drive"];
+  const authObject = get_auth(auth, scopes);
+
   const gdrive = drive({ version: "v3", auth: authObject });
-  gdrive.files
-    .export({ fileId: id, mimeType: "text/html" })
-    .then(parse)
-    .then((res) => writeFileSync(output, JSON.stringify(res)))
-    .then(() => success(`Wrote output to ${output}`))
-    .catch(console.error);
+
+  const file = await gdrive.files.export({ fileId: id, mimeType: "text/html" });
+  const json = await parse(file);
+
+  const dir = output.substring(0, output.lastIndexOf("/"));
+  !existsSync((dir.length > 0) ? dir : ".") && mkdirSync(dir, { recursive: true });
+  writeFileSync(output, JSON.stringify(json));
+  success(`Wrote output to ${output}`);
 };
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-
   const files = config.fetch.filter((d) => d.sheetId == null);
   files.forEach(fetchDoc);
 };
