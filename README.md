@@ -5,6 +5,10 @@
 A collection of helper scripts that are used across The Michigan Daily's
 projects.
 
+## Installation
+
+Run `yarn add --dev https://github.com/MichiganDaily/sink`
+
 ## Usage
 
 It's really easy, just run
