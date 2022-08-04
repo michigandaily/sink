@@ -52,7 +52,7 @@ async function main(opts) {
 }
 
 program
-  .version("1.0.0")
+  .version("1.2.0")
   .option("-c, --config <path>", "path to config file")
   .parse();
 
