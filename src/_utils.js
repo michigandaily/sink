@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
 import { existsSync, readFileSync } from "fs";
+import { homedir } from "os";
 
 export const load_config = async (configFile = "config.json") => {
   try {
@@ -19,17 +20,18 @@ export const fatal_error = (message) => {
 };
 
 export const success = (message) => {
-  console.log(chalk.green(message))
-}
+  console.log(chalk.green(message));
+};
 
-export const get_auth = (auth, scopes) => {
-  if (!existsSync(auth)) {
+export const get_auth = (path, scopes) => {
+  const file = path.startsWith("~") ? path.replace("~", homedir()) : path;
+  if (!existsSync(file)) {
     fatal_error(`
-  Could not open service account credentials at ${auth}.
+  Could not open service account credentials at ${file}.
   Reconfigure fetch.sheets.auth in config.json or download the credentials file.
   `);
   }
 
-  const authObject = new GoogleAuth({ keyFile: auth, scopes });
-  return authObject
-}
+  const authObject = new GoogleAuth({ keyFile: file, scopes });
+  return authObject;
+};
