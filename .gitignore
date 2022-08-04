@@ -1,1 +1,7 @@
 node_modules/
+.DS_Store
+auth.json
+
+*.csv
+*.json
+!config.example.json

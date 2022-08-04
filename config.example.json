@@ -1,17 +1,4 @@
 {
-  "hed": "Headline",
-  "dek": "Description",
-  "byline": "Name",
-  "source": "Source: The Michigan Daily",
-
-  "deployment": "https://michigandaily.github.io",
-
-  "ga_id": "",
-
-  "render": {
-    "srcDir": "./src/",
-    "buildDir": "./build/"
-  },
   "fetch": [
     {
       "id": "",
