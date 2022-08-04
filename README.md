@@ -14,8 +14,9 @@ Run `yarn add --dev https://github.com/MichiganDaily/sink`
 It's really easy, just run
 
 ```sh
-sink gsheet  # fetch google sheet
-sink gdoc    # fetch google doc
+sink gsheet  # fetch Google Sheets
+sink gdoc    # fetch Google Docs
+sink fetch # fetch Google Sheets and Docs
 ```
 
 Like before, you still need a `config.json` (usually comes with the template
