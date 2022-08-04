@@ -32,6 +32,5 @@ export const get_auth = (path, scopes) => {
   `);
   }
 
-  const authObject = new GoogleAuth({ keyFile: file, scopes });
-  return authObject;
+  return new GoogleAuth({ keyFile: file, scopes });
 };
