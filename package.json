@@ -7,7 +7,14 @@
     "sink": "src/sink.js"
   },
   "repository": "https://github.com/MichiganDaily/sink",
-  "author": "Naitian Zhou",
+  "author": {
+    "name": "Naitian Zhou"
+  },
+  "contributors": [
+    {
+      "name": "Eric Lau"
+    }
+  ],
   "license": "MIT",
   "private": true,
   "type": "module",
