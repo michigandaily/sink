@@ -6,7 +6,8 @@ program
   .version("1.0.0")
   .name("sink")
   .description("Utility scripts")
-  .command("gdoc", "fetch Google archieml doc into JSON file")
-  .command("gsheet", "fetch Google sheet into CSV file");
+  .command("gdoc", "fetch ArchieML Google Doc into JSON file")
+  .command("gsheet", "fetch Google Sheet into CSV file")
+  .command("fetch", "fetch all Google Docs and Sheets");
 
 program.parse(process.argv);
