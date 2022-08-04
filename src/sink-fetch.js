@@ -1,6 +1,8 @@
-import { fetchDoc } from "./sink-gdoc";
-import { fetchSheet } from "./sink-gsheet";
-import { load_config } from "./_utils";
+import { program } from "commander/esm.mjs";
+
+import { fetchDoc } from "./sink-gdoc.js";
+import { fetchSheet } from "./sink-gsheet.js";
+import { load_config } from "./_utils.js";
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
