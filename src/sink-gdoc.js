@@ -5,13 +5,11 @@
 // - Remove styles from item keys
 // - Make keys case insensitive (lowercase all)
 
-// const config = fs.readFileSync(env.CONFIG_PATH)
 import { fileURLToPath } from "node:url";
-import { program } from "commander/esm.mjs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-import { load_config, success, get_auth } from "./_utils.js";
+import { program } from "commander/esm.mjs";
 import { drive } from "@googleapis/drive";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { decode } from "html-entities";
 
 import archieml from "archieml";
@@ -19,6 +17,8 @@ const { load } = archieml;
 
 import htmlparser2 from "htmlparser2";
 const { DomHandler, Parser } = htmlparser2;
+
+import { load_config, success, get_auth } from "./_utils.js";
 
 const parse = (file) => {
   return new Promise((res, rej) => {

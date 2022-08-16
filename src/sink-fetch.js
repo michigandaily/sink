@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+
 import { program } from "commander/esm.mjs";
 
 import { fetchDoc } from "./sink-gdoc.js";
