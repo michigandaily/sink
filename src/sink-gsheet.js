@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { fileURLToPath } from "node:url";
 import { load_config, success, get_auth } from "./_utils.js";
 import { program } from "commander/esm.mjs";
 import { sheets } from "@googleapis/sheets";
@@ -54,9 +55,12 @@ async function main(opts) {
   files.forEach(fetchSheet);
 }
 
-program
-  .version("1.2.0")
-  .option("-c, --config <path>", "path to config file")
-  .parse();
+const self = fileURLToPath(import.meta.url);
+if (process.argv[1] === self) {
+  program
+    .version("1.2.0")
+    .option("-c, --config <path>", "path to config file")
+    .parse();
 
-main(program.opts());
+  main(program.opts());
+}

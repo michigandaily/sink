@@ -6,6 +6,7 @@
 // - Make keys case insensitive (lowercase all)
 
 // const config = fs.readFileSync(env.CONFIG_PATH)
+import { fileURLToPath } from "node:url";
 import { program } from "commander/esm.mjs";
 
 import { load_config, success, get_auth } from "./_utils.js";
@@ -115,7 +116,8 @@ export const fetchDoc = async ({ id, output, auth }) => {
   const json = await parse(file);
 
   const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync((dir.length > 0) ? dir : ".") && mkdirSync(dir, { recursive: true });
+  !existsSync(dir.length > 0 ? dir : ".") &&
+    mkdirSync(dir, { recursive: true });
   writeFileSync(output, JSON.stringify(json));
   success(`Wrote output to ${output}`);
 };
@@ -128,9 +130,12 @@ const main = async (opts) => {
   files.forEach(fetchDoc);
 };
 
-program
-  .version("1.2.0")
-  .option("-c, --config <path>", "path to config file")
-  .parse();
+const self = fileURLToPath(import.meta.url);
+if (process.argv[1] === self) {
+  program
+    .version("1.2.0")
+    .option("-c, --config <path>", "path to config file")
+    .parse();
 
-main(program.opts());
+  main(program.opts());
+}
