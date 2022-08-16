@@ -6,10 +6,12 @@ import { load_config } from "./_utils.js";
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-  config.fetch.forEach((file) => {
-    const func = file.sheetId == null ? fetchDoc : fetchSheet;
-    func(file);
-  });
+  config.fetch
+    .filter((d) => d.id.length && d.output.length)
+    .forEach((file) => {
+      const func = file.sheetId == null ? fetchDoc : fetchSheet;
+      func(file);
+    });
 };
 
 program
