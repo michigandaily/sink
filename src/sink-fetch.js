@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { program } from "commander/esm.mjs";
 
 import { fetchDoc } from "./sink-gdoc.js";
@@ -14,9 +15,12 @@ const main = async (opts) => {
     });
 };
 
-program
-  .version("1.2.0")
-  .option("-c, --config <path>", "path to config file")
-  .parse();
+const self = fileURLToPath(import.meta.url);
+if (process.argv[1] === self) {
+  program
+    .version("1.2.0")
+    .option("-c, --config <path>", "path to config file")
+    .parse();
 
-main(program.opts());
+  main(program.opts());
+}
