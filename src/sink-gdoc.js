@@ -122,7 +122,9 @@ export const fetchDoc = async ({ id, output, auth }) => {
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-  const files = config.fetch.filter((d) => d.sheetId == null);
+  const files = config.fetch.filter(
+    (d) => d.sheetId == null && d.id.length && d.output.length
+  );
   files.forEach(fetchDoc);
 };
 

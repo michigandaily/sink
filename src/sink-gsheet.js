@@ -40,15 +40,18 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
   const csv = parse(nameQ);
 
   const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync((dir.length > 0) ? dir : ".") && mkdirSync(dir, { recursive: true });
+  !existsSync(dir.length > 0 ? dir : ".") &&
+    mkdirSync(dir, { recursive: true });
   writeFileSync(output, csv);
   success(`Wrote output to ${output}`);
 };
 
 async function main(opts) {
   const { config } = await load_config(opts.config);
-  const files = config.fetch.filter(d => d.sheetId !== undefined)
-  files.forEach(fetchSheet)
+  const files = config.fetch.filter(
+    (d) => d.sheetId !== undefined && d.id.length && d.output.length
+  );
+  files.forEach(fetchSheet);
 }
 
 program
