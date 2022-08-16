@@ -1,10 +1,11 @@
-// Search directory for configuration file
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+
 import chalk from "chalk";
 import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
-import { existsSync, readFileSync } from "fs";
-import { homedir } from "os";
 
+// Search directory for configuration file
 export const load_config = async (configFile = "config.json") => {
   try {
     const path = await findUp(configFile);

@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
 import { fileURLToPath } from "node:url";
-import { load_config, success, get_auth } from "./_utils.js";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+
 import { program } from "commander/esm.mjs";
 import { sheets } from "@googleapis/sheets";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { csvFormat } from "d3-dsv";
+
+import { load_config, success, get_auth } from "./_utils.js";
 
 const parse = (res) => {
   const csv = Array();
