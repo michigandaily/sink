@@ -7,7 +7,7 @@ projects.
 
 ## Installation
 
-Run `yarn add --dev https://github.com/MichiganDaily/sink`
+Run `yarn add --dev michigandaily/sink`
 
 ## Usage
 
