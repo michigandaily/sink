@@ -3,7 +3,7 @@
 import { fileURLToPath } from "node:url";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 import { sheets } from "@googleapis/sheets";
 import { csvFormat } from "d3-dsv";
 

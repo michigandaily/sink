@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 
 program
   .version("1.3.0")
