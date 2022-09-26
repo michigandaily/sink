@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { program } from "commander/esm.mjs";
 import { drive } from "@googleapis/drive";
 
-import { load_config, success, get_auth } from "./_utils";
+import { load_config, success, get_auth } from "./_utils.js";
 
 export const fetchJson = async ({ id, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/drive"];
@@ -12,14 +12,13 @@ export const fetchJson = async ({ id, output, auth }) => {
 
   const gdrive = drive({ version: "v3", auth: authObject });
 
-  const file = await gdrive.files.export({ fileId: id, mimeType: "text/json" });
-  console.log(file);
+  const { data } = await gdrive.files.get({ fileId: id, alt: "media" });
 
-  // const dir = output.substring(0, output.lastIndexOf("/"));
-  // !existsSync(dir.length > 0 ? dir : ".") &&
-  //   mkdirSync(dir, { recursive: true });
-  // writeFileSync(output, JSON.stringify(json));
-  // success(`Wrote output to ${output}`);
+  const dir = output.substring(0, output.lastIndexOf("/"));
+  !existsSync(dir.length > 0 ? dir : ".") &&
+    mkdirSync(dir, { recursive: true });
+  writeFileSync(output, JSON.stringify(data));
+  success(`Wrote output to ${output}`);
 };
 
 const main = async (opts) => {
