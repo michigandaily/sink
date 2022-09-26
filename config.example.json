@@ -3,13 +3,13 @@
     {
       "id": "",
       "output": "",
-      "auth": "./auth.json"
+      "auth": "~/.daily-google-services.json"
     },
     {
       "id": "",
       "sheetId": "0",
       "output": "",
-      "auth": "./auth.json"
+      "auth": "~/.daily-google-services.json"
     }
   ]
 }
