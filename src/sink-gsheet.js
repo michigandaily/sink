@@ -52,7 +52,7 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
 async function main(opts) {
   const { config } = await load_config(opts.config);
   const files = config.fetch.filter(
-    (d) => d.sheetId !== undefined && d.id.length && d.output.length
+    (d) => d.type === "sheet" && d.id.length && d.output.length
   );
   files.forEach(fetchSheet);
 }

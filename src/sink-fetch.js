@@ -4,14 +4,21 @@ import { program } from "commander/esm.mjs";
 
 import { fetchDoc } from "./sink-gdoc.js";
 import { fetchSheet } from "./sink-gsheet.js";
+import { fetchJson } from "./sink-json.js";
 import { load_config } from "./_utils.js";
 
 const main = async (opts) => {
+  const typeToFunction = {
+    doc: fetchDoc,
+    sheet: fetchSheet,
+    json: fetchJson,
+  };
+
   const { config } = await load_config(opts.config);
   config.fetch
     .filter((d) => d.id.length && d.output.length)
     .forEach((file) => {
-      const func = file.sheetId == null ? fetchDoc : fetchSheet;
+      const func = typeToFunction(file.type);
       func(file);
     });
 };
