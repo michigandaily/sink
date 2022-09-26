@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 import { drive } from "@googleapis/drive";
 
 import { load_config, success, get_auth } from "./_utils.js";
