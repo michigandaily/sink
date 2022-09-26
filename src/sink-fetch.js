@@ -18,7 +18,7 @@ const main = async (opts) => {
   config.fetch
     .filter((d) => d.id.length && d.output.length)
     .forEach((file) => {
-      const func = typeToFunction(file.type);
+      const func = typeToFunction[file.type];
       func(file);
     });
 };
