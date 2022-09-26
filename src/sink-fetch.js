@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 
 import { fetchDoc } from "./sink-gdoc.js";
 import { fetchSheet } from "./sink-gsheet.js";
