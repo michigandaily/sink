@@ -3,7 +3,7 @@
 import { program } from "commander";
 
 program
-  .version("1.3.0")
+  .version("2.0.0")
   .name("sink")
   .description("Utility scripts")
   .command("gdoc", "fetch ArchieML Google Doc into JSON file")
