@@ -8,15 +8,14 @@
 import { fileURLToPath } from "node:url";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 import { drive } from "@googleapis/drive";
 import { decode } from "html-entities";
 
 import archieml from "archieml";
 const { load } = archieml;
 
-import htmlparser2 from "htmlparser2";
-const { DomHandler, Parser } = htmlparser2;
+import { DomHandler, Parser } from "htmlparser2";
 
 import { load_config, success, get_auth } from "./_utils.js";
 
@@ -125,7 +124,7 @@ export const fetchDoc = async ({ id, output, auth }) => {
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
   const files = config.fetch.filter(
-    (d) => d.sheetId == null && d.id.length && d.output.length
+    (d) => d.type === "doc" && d.id.length && d.output.length
   );
   files.forEach(fetchDoc);
 };

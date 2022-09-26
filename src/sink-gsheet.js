@@ -3,7 +3,7 @@
 import { fileURLToPath } from "node:url";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 import { sheets } from "@googleapis/sheets";
 import { csvFormat } from "d3-dsv";
 
@@ -52,7 +52,8 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
 async function main(opts) {
   const { config } = await load_config(opts.config);
   const files = config.fetch.filter(
-    (d) => d.sheetId !== undefined && d.id.length && d.output.length
+    (d) =>
+      d.type === "sheet" && d.id.length && d.output.length && d.sheetId.length
   );
   files.forEach(fetchSheet);
 }

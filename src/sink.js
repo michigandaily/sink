@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { program } from "commander/esm.mjs";
+import { program } from "commander";
 
 program
   .version("1.3.0")
@@ -8,6 +8,7 @@ program
   .description("Utility scripts")
   .command("gdoc", "fetch ArchieML Google Doc into JSON file")
   .command("gsheet", "fetch Google Sheet into CSV file")
+  .command("json", "fetch JSON files from Google Drive")
   .command("fetch", "fetch all Google Docs and Sheets");
 
 program.parse(process.argv);

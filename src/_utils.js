@@ -29,7 +29,7 @@ export const get_auth = (path, scopes) => {
   if (!existsSync(file)) {
     fatal_error(`
   Could not open service account credentials at ${file}.
-  Reconfigure fetch.sheets.auth in config.json or download the credentials file.
+  Reconfigure your auth properties in config.json or download the credentials file.
   `);
   }
 
