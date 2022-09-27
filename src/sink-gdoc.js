@@ -6,7 +6,6 @@
 // - Make keys case insensitive (lowercase all)
 
 import { fileURLToPath } from "node:url";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
 import { program } from "commander";
 import { drive } from "@googleapis/drive";
@@ -17,7 +16,7 @@ const { load } = archieml;
 
 import { DomHandler, Parser } from "htmlparser2";
 
-import { load_config, success, get_auth } from "./_utils.js";
+import { load_config, success, get_auth, write_file } from "./_utils.js";
 
 const parse = (file) => {
   return new Promise((res, rej) => {
@@ -114,10 +113,7 @@ export const fetchDoc = async ({ id, output, auth }) => {
   const file = await gdrive.files.export({ fileId: id, mimeType: "text/html" });
   const json = await parse(file);
 
-  const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync(dir.length > 0 ? dir : ".") &&
-    mkdirSync(dir, { recursive: true });
-  writeFileSync(output, JSON.stringify(json));
+  write_file(output, JSON.stringify(json));
   success(`Wrote output to ${output}`);
 };
 
