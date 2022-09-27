@@ -58,6 +58,14 @@ To fetch all Google Sheets that are specified in `fetch`, run `yarn sink gsheet`
 
 To fetch all JSON files that are specified in `fetch`, run `yarn sink json`.
 
+### Fetching a CSV file
+
+1. Set the value of `type` to `csv`.
+2. Consider this generalized Google Drive CSV URL: <https://drive.google.com/file/d/FILE_ID/>. You'll need to click "Get link" in the context menu and then click "Copy link" in the popup in order to get a CSV file's URL.
+3. Set the value of `id` to `<FILE_ID>`.
+
+To fetch all CSV files that are specified in `fetch`, run `yarn sink csv`.
+
 ### Fetching everything
 
 To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
