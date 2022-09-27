@@ -18,6 +18,12 @@
       "id": "",
       "output": "",
       "auth": "~/.daily-google-services.json"
+    },
+    {
+      "type": "csv",
+      "id": "",
+      "output": "",
+      "auth": "~/.daily-google-services.json"
     }
   ]
 }

@@ -5,6 +5,7 @@ import { program } from "commander";
 import { fetchDoc } from "./sink-gdoc.js";
 import { fetchSheet } from "./sink-gsheet.js";
 import { fetchJson } from "./sink-json.js";
+import { fetchCsv } from "./sink-csv.js";
 import { load_config, fatal_error } from "./_utils.js";
 
 const main = async (opts) => {
@@ -12,6 +13,7 @@ const main = async (opts) => {
     doc: fetchDoc,
     sheet: fetchSheet,
     json: fetchJson,
+    csv: fetchCsv,
   };
 
   const { config } = await load_config(opts.config);
