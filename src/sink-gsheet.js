@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 import { fileURLToPath } from "node:url";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 
 import { program } from "commander";
 import { sheets } from "@googleapis/sheets";
 import { csvFormat } from "d3-dsv";
 
-import { load_config, success, get_auth } from "./_utils.js";
+import { load_config, success, get_auth, write_file } from "./_utils.js";
 
 const parse = (res) => {
   const csv = Array();
@@ -42,10 +41,7 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
 
   const csv = parse(nameQ);
 
-  const dir = output.substring(0, output.lastIndexOf("/"));
-  !existsSync(dir.length > 0 ? dir : ".") &&
-    mkdirSync(dir, { recursive: true });
-  writeFileSync(output, csv);
+  write_file(output, csv);
   success(`Wrote output to ${output}`);
 };
 

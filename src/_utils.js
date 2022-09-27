@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 
 import chalk from "chalk";
@@ -13,6 +13,14 @@ export const load_config = async (configFile = "config.json") => {
   } catch {
     fatal_error("Could not load config file");
   }
+};
+
+export const write_file = (output, content) => {
+  const dir = output.substring(0, output.lastIndexOf("/"));
+  if (!existsSync(dir.length > 0 ? dir : ".")) {
+    mkdirSync(dir, { recursive: true });
+  }
+  writeFileSync(output, content);
 };
 
 export const fatal_error = (message) => {
