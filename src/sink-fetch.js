@@ -5,7 +5,7 @@ import { program } from "commander";
 import { fetchDoc } from "./sink-gdoc.js";
 import { fetchSheet } from "./sink-gsheet.js";
 import { fetchJson } from "./sink-json.js";
-import { load_config } from "./_utils.js";
+import { load_config, fatal_error } from "./_utils.js";
 
 const main = async (opts) => {
   const typeToFunction = {
@@ -19,6 +19,11 @@ const main = async (opts) => {
     .filter((d) => d.id.length && d.output.length)
     .forEach((file) => {
       const func = typeToFunction[file.type];
+      if (typeof func !== "function") {
+        fatal_error(
+          `Unsupported file type ${file.type} encountered when attempting to fetch ${file.id}`
+        );
+      }
       func(file);
     });
 };
