@@ -47,11 +47,12 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
 
 async function main(opts) {
   const { config } = await load_config(opts.config);
-  const files = config.fetch.filter(
-    (d) =>
-      d.type === "sheet" && d.id.length && d.output.length && d.sheetId.length
-  );
-  files.forEach(fetchSheet);
+  config.fetch
+    ?.filter(
+      (d) =>
+        d.type === "sheet" && d.id.length && d.output.length && d.sheetId.length
+    )
+    .forEach(fetchSheet);
 }
 
 const self = fileURLToPath(import.meta.url);

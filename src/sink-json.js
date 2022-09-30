@@ -19,10 +19,9 @@ export const fetchJson = async ({ id, output, auth }) => {
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-  const files = config.fetch.filter(
-    (d) => d.type === "json" && d.id.length && d.output.length
-  );
-  files.forEach(fetchJson);
+  config.fetch
+    ?.filter((d) => d.type === "json" && d.id.length && d.output.length)
+    .forEach(fetchJson);
 };
 
 const self = fileURLToPath(import.meta.url);

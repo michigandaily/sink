@@ -18,7 +18,7 @@ const main = async (opts) => {
 
   const { config } = await load_config(opts.config);
   config.fetch
-    .filter((d) => d.id.length && d.output.length)
+    ?.filter((d) => d.id.length && d.output.length)
     .forEach((file) => {
       const func = typeToFunction[file.type];
       if (typeof func !== "function") {

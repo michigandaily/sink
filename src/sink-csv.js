@@ -19,10 +19,9 @@ export const fetchCsv = async ({ id, output, auth }) => {
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-  const files = config.fetch.filter(
-    (d) => d.type === "csv" && d.id.length && d.output.length
-  );
-  files.forEach(fetchCsv);
+  config.fetch
+    ?.filter((d) => d.type === "csv" && d.id.length && d.output.length)
+    .forEach(fetchCsv);
 };
 
 const self = fileURLToPath(import.meta.url);
