@@ -6,9 +6,9 @@ import { createHash } from "node:crypto";
 import { program, Argument } from "commander";
 import {
   S3Client,
-  // HeadObjectCommand,
   ListObjectsCommand,
   PutObjectCommand,
+  DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { load_config, success } from "./_utils.js";
@@ -65,7 +65,7 @@ const main = async ([platform], opts) => {
         const res = await client.send(put);
         const status = res.$metadata.httpStatusCode;
         const log = status === 200 ? success : console.log;
-        log(`status ${status} - ${join(bucket, k)}`);
+        log(`status ${status} - uploaded ${k}`);
       });
     };
 
@@ -97,15 +97,46 @@ const main = async ([platform], opts) => {
         }
 
         for (const [key, etag] of local.entries()) {
-          if (remote.get(key) !== etag) {
+          if (!remote.has(key)) {
             filesToAdd.push(key);
-          } else if (!remote.has(key)) {
+          } else if (remote.get(key) !== etag) {
             filesToAdd.push(key);
+          } else if (remote.get(key) === etag) {
+            console.log(
+              `skipping ${key} - local and remote ETags are identical`
+            );
           }
         }
 
-        console.log(filesToDelete);
-        console.log(filesToAdd);
+        if (filesToDelete.length > 0) {
+          const remove = new DeleteObjectsCommand({
+            Bucket: bucket,
+            Delete: {
+              Objects: filesToDelete.map((f) => ({ Key: f })),
+            },
+          });
+
+          const res = await client.send(remove);
+          filesToDelete.forEach((f) => {
+            console.log(
+              `status ${res.$metadata.httpStatusCode} - deleted ${f}`
+            );
+          });
+        }
+
+        filesToAdd.forEach(async (file) => {
+          const fp = join(parent, file.replace(key, ""));
+          const stream = createReadStream(fp);
+          const upload = new PutObjectCommand({
+            Bucket: bucket,
+            Key: file,
+            Body: stream,
+          });
+          const res = await client.send(upload);
+          const status = res.$metadata.httpStatusCode;
+          const log = status === 200 ? success : console.log;
+          log(`status ${status} - uploaded ${file}`);
+        });
       }
     } else {
       console.log(`Creating new directory ${key} in ${bucket}.`);
