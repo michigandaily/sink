@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
 import {
@@ -26,6 +27,20 @@ const readDirectory = (directory) => {
   return files;
 };
 
+const getFileETag = async (file) => {
+  const stream = createReadStream(file);
+  const hash = createHash("md5");
+  return await new Promise((res) => {
+    stream.on("data", (data) => {
+      hash.update(data, "utf8");
+    });
+
+    stream.on("end", () => {
+      res(`"${hash.digest("hex")}"`);
+    });
+  });
+};
+
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
   if (platform === "aws") {
@@ -49,18 +64,48 @@ const main = async ([platform], opts) => {
         });
         const res = await client.send(put);
         const status = res.$metadata.httpStatusCode;
-        const display = status === 200 ? success : console.log;
-        display(`status ${status} - ${join(bucket, k)}`);
+        const log = status === 200 ? success : console.log;
+        log(`status ${status} - ${join(bucket, k)}`);
       });
     };
 
     if (Object.hasOwn(response, "Contents")) {
-      const content = response.Contents.slice(1);
+      const content = response.Contents.filter((d) => !d.Key.endsWith("/"));
       if (content.length === 0) {
         uploadFiles(directory);
       } else {
-        // reconcile which things to keep, delete, add.
-        // invalidate cloudfront cache
+        const filesToDelete = Array();
+        const filesToAdd = Array();
+
+        const remote = new Map(content.map(({ Key, ETag }) => [Key, ETag]));
+        const local = new Map(
+          await Promise.all(
+            directory.map(async (file) => {
+              const Key = join(key, file.replace(parent, ""));
+              const ETag = await getFileETag(file);
+              return [Key, ETag];
+            })
+          )
+        );
+
+        for (const [key, etag] of remote.entries()) {
+          if (!local.has(key)) {
+            filesToDelete.push(key);
+          } else if (local.get(key) !== etag) {
+            filesToDelete.push(key);
+          }
+        }
+
+        for (const [key, etag] of local.entries()) {
+          if (remote.get(key) !== etag) {
+            filesToAdd.push(key);
+          } else if (!remote.has(key)) {
+            filesToAdd.push(key);
+          }
+        }
+
+        console.log(filesToDelete);
+        console.log(filesToAdd);
       }
     } else {
       console.log(`Creating new directory ${key} in ${bucket}.`);
