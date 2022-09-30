@@ -11,6 +11,6 @@ program
   .command("json", "fetch JSON files from Google Drive")
   .command("csv", "fetch CSV files from Google Drive")
   .command("fetch", "fetch all Google Docs and Sheets")
-  .command("aws", "deploy a build directory to AWS S3");
+  .command("deploy", "deploy a build directory to AWS S3");
 
 program.parse(process.argv);

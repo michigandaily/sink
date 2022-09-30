@@ -72,8 +72,9 @@ To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
 
 ## AWS S3 deployment
 
-Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `bucket`, `key`, `build`, and `profile`.
+Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `region`, `bucket`, `key`, `build`, and `profile`.
 
+- The `region` property specifies where the S3 bucket is located.
 - The `bucket` property will be used to determine which S3 bucket to deploy to.
 - The `key` property will be used to determine which sub-directory in the `bucket` to deploy to.
 - The `build` property will be used to determine which directory's content will be deployed to S3.
@@ -87,4 +88,4 @@ aws_access_key_id=<Insert value from "Access key ID" column here>
 aws_secret_access_key=<Insert value from "Secret access key" column here>
 ```
 
-Now, you can deploy to S3 by running `yarn sink aws`.
+Now, you can deploy to S3 by running `yarn sink deploy aws`.

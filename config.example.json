@@ -27,6 +27,7 @@
     }
   ],
   "deployment": {
+    "region": "us-east-2",
     "bucket": "",
     "key": "",
     "build": "./dist",

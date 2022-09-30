@@ -5,3 +5,5 @@ auth.json
 *.csv
 *.json
 !config.example.json
+
+dist/*
