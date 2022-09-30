@@ -18,7 +18,7 @@ const main = async (opts) => {
 
   const { config } = await load_config(opts.config);
   config.fetch
-    .filter((d) => d.id.length && d.output.length)
+    ?.filter((d) => d.id.length && d.output.length)
     .forEach((file) => {
       const func = typeToFunction[file.type];
       if (typeof func !== "function") {
@@ -33,7 +33,7 @@ const main = async (opts) => {
 const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.1.0")
+    .version("2.1.1")
     .option("-c, --config <path>", "path to config file")
     .parse();
 

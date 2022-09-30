@@ -19,16 +19,15 @@ export const fetchJson = async ({ id, output, auth }) => {
 
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
-  const files = config.fetch.filter(
-    (d) => d.type === "json" && d.id.length && d.output.length
-  );
-  files.forEach(fetchJson);
+  config.fetch
+    ?.filter((d) => d.type === "json" && d.id.length && d.output.length)
+    .forEach(fetchJson);
 };
 
 const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.1.0")
+    .version("2.1.1")
     .option("-c, --config <path>", "path to config file")
     .parse();
 
