@@ -25,5 +25,11 @@
       "output": "",
       "auth": "~/.daily-google-services.json"
     }
-  ]
+  ],
+  "deployment": {
+    "bucket": "",
+    "key": "",
+    "build": "./dist",
+    "profile": "sink"
+  }
 }

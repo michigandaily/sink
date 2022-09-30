@@ -8,7 +8,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 Run `yarn add --dev michigandaily/sink`
 
-## Usage
+## Google Drive fetch
 
 Create a configuration file (i.e. `config.json`). The JSON file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
 
@@ -31,7 +31,7 @@ For each `output` property, specify a path relative to `config.json` or an absol
 
 In order to fetch files from Google Drive, we have to use an authentication file associated with a Google Cloud Platform (GCP) service account with sufficient view permissions.
 
-> To Daily staffers, ask a managing online editor for access to this authentication file. They will retrieve it for you from 1Password via a private link. The file will be called `.daily-google-services.json`. It is recommended that you place this at the home directory of your computer (i.e. `~`) and specify the `auth` property as `~/.daily-google-services.json`. Note the `client_email` property inside the authentication file. That email must have view access to files that you wish to fetch.
+> To Daily staffers: ask a managing online editor for access to this authentication file. They will retrieve it for you from 1Password via a private link. The file will be called `.daily-google-services.json`. It is recommended that you place this at the home directory of your computer (i.e. `~`) and specify the `auth` property as `~/.daily-google-services.json`. Note the `client_email` property inside the authentication file. That email must have view access to files that you wish to fetch.
 
 ### Fetching an ArchieML Google Document as a JSON file
 
@@ -69,3 +69,22 @@ To fetch all CSV files that are specified in `fetch`, run `yarn sink csv`.
 ### Fetching everything
 
 To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
+
+## AWS S3 deployment
+
+Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `bucket`, `key`, `build`, and `profile`.
+
+- The `bucket` property will be used to determine which S3 bucket to deploy to.
+- The `key` property will be used to determine which sub-directory in the `bucket` to deploy to.
+- The `build` property will be used to determine which directory's content will be deployed to S3.
+- The `profile` property will be used as the name of the AWS credentials profile specified in `~/.aws/credentials`.
+
+> To Daily staffers: ask a managing online editor for access to AWS credentials. They will retrieve it for you from 1Password via a private link. You will receive a CSV file that contains "Access key ID" and "Secret access key" columns. If you do not already have a file located at `~/.aws/credentials`, create that file. Then populate it with the following:
+
+```plaintext
+[sink]
+aws_access_key_id=<Insert value from "Access key ID" column here>
+aws_secret_access_key=<Insert value from "Secret access key" column here>
+```
+
+Now, you can deploy to S3 by running `yarn sink aws`.
