@@ -5,6 +5,8 @@ import chalk from "chalk";
 import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
 
+export const has_filled_props = (o) => Object.values(o).every((v) => v.length);
+
 // Search directory for configuration file
 export const load_config = async (configFile = "config.json") => {
   try {

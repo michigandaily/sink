@@ -6,7 +6,7 @@ import { fetchDoc } from "./sink-gdoc.js";
 import { fetchSheet } from "./sink-gsheet.js";
 import { fetchJson } from "./sink-json.js";
 import { fetchCsv } from "./sink-csv.js";
-import { load_config, fatal_error } from "./_utils.js";
+import { load_config, fatal_error, has_filled_props } from "./_utils.js";
 
 const main = async (opts) => {
   const typeToFunction = {
@@ -18,7 +18,7 @@ const main = async (opts) => {
 
   const { config } = await load_config(opts.config);
   config.fetch
-    ?.filter((d) => d.id.length && d.output.length)
+    ?.filter((d) => has_filled_props(d))
     .forEach((file) => {
       const func = typeToFunction[file.type];
       if (typeof func !== "function") {

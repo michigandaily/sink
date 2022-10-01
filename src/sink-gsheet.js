@@ -6,7 +6,13 @@ import { program } from "commander";
 import { sheets } from "@googleapis/sheets";
 import { csvFormat } from "d3-dsv";
 
-import { load_config, success, get_auth, write_file } from "./_utils.js";
+import {
+  load_config,
+  success,
+  get_auth,
+  write_file,
+  has_filled_props,
+} from "./_utils.js";
 
 const parse = (res) => {
   const csv = Array();
@@ -48,10 +54,7 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
 async function main(opts) {
   const { config } = await load_config(opts.config);
   config.fetch
-    ?.filter(
-      (d) =>
-        d.type === "sheet" && d.id.length && d.output.length && d.sheetId.length
-    )
+    ?.filter((d) => d.type === "sheet" && has_filled_props(d))
     .forEach(fetchSheet);
 }
 
