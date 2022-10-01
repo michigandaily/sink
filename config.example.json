@@ -25,5 +25,13 @@
       "output": "",
       "auth": "~/.daily-google-services.json"
     }
-  ]
+  ],
+  "deployment": {
+    "distribution": "",
+    "region": "us-east-2",
+    "bucket": "",
+    "key": "",
+    "build": "./dist",
+    "profile": "sink"
+  }
 }

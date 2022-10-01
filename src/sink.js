@@ -10,6 +10,7 @@ program
   .command("gsheet", "fetch Google Sheet into CSV file")
   .command("json", "fetch JSON files from Google Drive")
   .command("csv", "fetch CSV files from Google Drive")
-  .command("fetch", "fetch all Google Docs and Sheets");
+  .command("fetch", "fetch all Google Docs and Sheets")
+  .command("deploy", "deploy a build directory to AWS S3");
 
 program.parse(process.argv);
