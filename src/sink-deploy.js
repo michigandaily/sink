@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join, extname, dirname, basename } from "node:path";
+import { join, extname, dirname } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
@@ -48,7 +48,7 @@ const getFileETag = async (file) => {
 
 const createInvalidationPath = (fp) => {
   const dir = dirname(fp);
-  return dir === "." ? `/${basename(fp)}` : `/${dir}/*`;
+  return dir === "." ? `/*` : `/${dir}/*`;
 };
 
 const depth = (directory) => directory.split("/").length - 1;
