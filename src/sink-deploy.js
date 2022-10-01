@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join } from "node:path";
+import { join, extname } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
@@ -11,6 +11,7 @@ import {
   DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";
+import { lookup } from "mime-types";
 import { load_config, success } from "./_utils.js";
 
 const readDirectory = (directory) => {
@@ -61,6 +62,7 @@ const main = async ([platform], opts) => {
           Bucket: bucket,
           Key: k,
           Body: stream,
+          ContentType: lookup(extname(file)) || "application/octet-stream",
         });
         const res = await client.send(put);
         const status = res.$metadata.httpStatusCode;
@@ -131,6 +133,7 @@ const main = async ([platform], opts) => {
             Bucket: bucket,
             Key: file,
             Body: stream,
+            ContentType: lookup(extname(file)) || "application/octet-stream",
           });
           const res = await client.send(upload);
           const status = res.$metadata.httpStatusCode;
