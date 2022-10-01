@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join, extname } from "node:path";
+import { join, extname, dirname } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
@@ -82,7 +82,7 @@ const main = async ([platform], opts) => {
         uploadFiles(directory);
       } else {
         const filesToDelete = Array();
-        const filesToReplace = Array();
+        const filesToReplace = new Set();
         const filesToAdd = Array();
 
         const remote = new Map(content.map(({ Key, ETag }) => [Key, ETag]));
@@ -101,7 +101,10 @@ const main = async ([platform], opts) => {
             filesToDelete.push(key);
           } else if (local.get(key) !== etag) {
             filesToDelete.push(key);
-            filesToReplace.push(key.startsWith("/") ? key : `/${key}`);
+
+            const f = key.startsWith("/") ? key : `/${key}`;
+            const d = `${dirname(f)}/*`;
+            filesToReplace.add(d);
           }
         }
 
@@ -127,9 +130,9 @@ const main = async ([platform], opts) => {
 
           const res = await client.send(remove);
           filesToDelete.forEach((f) => {
-            console.log(
-              `status ${res.$metadata.httpStatusCode} - deleted ${f}`
-            );
+            const status = res.$metadata.httpStatusCode;
+            const log = status === 200 ? success : console.log;
+            log(`status ${status} - deleted ${f}`);
           });
         }
 
@@ -148,7 +151,7 @@ const main = async ([platform], opts) => {
           log(`status ${status} - uploaded ${file}`);
         });
 
-        if (filesToReplace.length > 0) {
+        if (filesToReplace.size > 0) {
           const { distribution } = config.deployment;
 
           const cloudfront = new CloudFrontClient({ region, credentials });
@@ -157,15 +160,15 @@ const main = async ([platform], opts) => {
             InvalidationBatch: {
               CallerReference: new Date().toISOString(),
               Paths: {
-                Quantity: filesToReplace.length,
-                Items: filesToReplace,
+                Quantity: filesToReplace.size,
+                Items: Array.from(filesToReplace),
               },
             },
           });
           const res = await cloudfront.send(invalidate);
           const status = res.$metadata.httpStatusCode;
-          const log = status === 200 ? success : console.log;
-          log(`status ${status} - invalidated ${filesToReplace}`);
+          const log = status === 201 ? success : console.log;
+          log(`status ${status} - invalidated ${Array.from(filesToReplace)}`);
         }
       }
     } else {
