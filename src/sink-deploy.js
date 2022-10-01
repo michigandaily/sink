@@ -135,7 +135,7 @@ const main = async ([platform], opts) => {
           });
         }
 
-        filesToAdd.forEach(async (file) => {
+        for await (const file of filesToAdd) {
           const fp = join(parent, file.replace(key, ""));
           const stream = createReadStream(fp);
           const upload = new PutObjectCommand({
@@ -148,7 +148,7 @@ const main = async ([platform], opts) => {
           const status = res.$metadata.httpStatusCode;
           const log = status === 200 ? success : console.log;
           log(`status ${status} - uploaded ${file}`);
-        });
+        }
 
         if (filesToInvalidate.size > 0) {
           const { distribution } = config.deployment;
