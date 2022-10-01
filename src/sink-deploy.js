@@ -46,7 +46,7 @@ const getFileETag = async (file) => {
   });
 };
 
-const constructParentDirectoryWithWildcard = (fp) => {
+const createInvalidationPath = (fp) => {
   const dir = dirname(fp);
   return dir === "." ? `/${basename(fp)}` : `/${dir}/*`;
 };
@@ -104,7 +104,7 @@ const main = async ([platform], opts) => {
         for (const [key, etag] of remote.entries()) {
           if (!local.has(key) || local.get(key) !== etag) {
             filesToDelete.push(key);
-            const d = constructParentDirectoryWithWildcard(key);
+            const d = createInvalidationPath(key);
             if (!filesToInvalidate.has(d)) {
               const setContainsParent = Array.from(filesToInvalidate).some(
                 (f) => {
