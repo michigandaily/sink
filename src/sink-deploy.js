@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join, extname, dirname } from "node:path";
+import { join, extname, dirname, basename } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
@@ -48,7 +48,7 @@ const getFileETag = async (file) => {
 
 const constructParentDirectoryWithWildcard = (fp) => {
   const dir = dirname(fp);
-  return dir === "." ? "/*" : `/${dir}/*`;
+  return dir === "." ? `/${basename(fp)}` : `/${dir}/*`;
 };
 
 const main = async ([platform], opts) => {
@@ -105,7 +105,18 @@ const main = async ([platform], opts) => {
           if (!local.has(key) || local.get(key) !== etag) {
             filesToDelete.push(key);
             const d = constructParentDirectoryWithWildcard(key);
-            filesToInvalidate.add(d);
+            if (!filesToInvalidate.has(d)) {
+              const setContainsParent = Array.from(filesToInvalidate).some(
+                (f) => {
+                  const parent = f.substring(0, f.length - 1);
+                  return d.startsWith(parent);
+                }
+              );
+
+              if (!setContainsParent) {
+                filesToInvalidate.add(d);
+              }
+            }
           }
         }
 
