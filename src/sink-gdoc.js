@@ -16,7 +16,13 @@ const { load } = archieml;
 
 import { DomHandler, Parser } from "htmlparser2";
 
-import { load_config, success, get_auth, write_file } from "./_utils.js";
+import {
+  load_config,
+  success,
+  get_auth,
+  write_file,
+  has_filled_props,
+} from "./_utils.js";
 
 const parse = (file) => {
   return new Promise((res, rej) => {
@@ -120,7 +126,7 @@ export const fetchDoc = async ({ id, output, auth }) => {
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
   config.fetch
-    ?.filter((d) => d.type === "doc" && d.id.length && d.output.length)
+    ?.filter((d) => d.type === "doc" && has_filled_props(d))
     .forEach(fetchDoc);
 };
 

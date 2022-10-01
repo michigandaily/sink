@@ -3,7 +3,13 @@ import { fileURLToPath } from "node:url";
 import { program } from "commander";
 import { drive } from "@googleapis/drive";
 
-import { load_config, success, get_auth, write_file } from "./_utils.js";
+import {
+  load_config,
+  success,
+  get_auth,
+  write_file,
+  has_filled_props,
+} from "./_utils.js";
 
 export const fetchJson = async ({ id, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/drive"];
@@ -20,7 +26,7 @@ export const fetchJson = async ({ id, output, auth }) => {
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
   config.fetch
-    ?.filter((d) => d.type === "json" && d.id.length && d.output.length)
+    ?.filter((d) => d.type === "json" && has_filled_props(d))
     .forEach(fetchJson);
 };
 
