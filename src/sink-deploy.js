@@ -46,6 +46,11 @@ const getFileETag = async (file) => {
   });
 };
 
+const constructParentDirectoryWithWildcard = (fp) => {
+  const dir = dirname(fp);
+  return dir === "." ? "/*" : `/${dir}/*`;
+};
+
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
   if (platform === "aws") {
@@ -61,7 +66,7 @@ const main = async ([platform], opts) => {
 
     const uploadFiles = (files) => {
       files.forEach(async (file) => {
-        const k = join(key, file.replace(parent, ""));
+        const k = join(key, file.replace(parent, "")).substring(1);
         const stream = createReadStream(file);
         const put = new PutObjectCommand({
           Bucket: bucket,
@@ -82,14 +87,14 @@ const main = async ([platform], opts) => {
         uploadFiles(directory);
       } else {
         const filesToDelete = Array();
-        const filesToReplace = new Set();
+        const filesToInvalidate = new Set();
         const filesToAdd = Array();
 
         const remote = new Map(content.map(({ Key, ETag }) => [Key, ETag]));
         const local = new Map(
           await Promise.all(
             directory.map(async (file) => {
-              const Key = join(key, file.replace(parent, ""));
+              const Key = join(key, file.replace(parent, "")).substring(1);
               const ETag = await getFileETag(file);
               return [Key, ETag];
             })
@@ -97,21 +102,15 @@ const main = async ([platform], opts) => {
         );
 
         for (const [key, etag] of remote.entries()) {
-          if (!local.has(key)) {
+          if (!local.has(key) || local.get(key) !== etag) {
             filesToDelete.push(key);
-          } else if (local.get(key) !== etag) {
-            filesToDelete.push(key);
-
-            const f = key.startsWith("/") ? key : `/${key}`;
-            const d = `${dirname(f)}/*`;
-            filesToReplace.add(d);
+            const d = constructParentDirectoryWithWildcard(key);
+            filesToInvalidate.add(d);
           }
         }
 
         for (const [key, etag] of local.entries()) {
-          if (!remote.has(key)) {
-            filesToAdd.push(key);
-          } else if (remote.get(key) !== etag) {
+          if (!remote.has(key) || remote.get(key) !== etag) {
             filesToAdd.push(key);
           } else if (remote.get(key) === etag) {
             console.log(
@@ -151,7 +150,7 @@ const main = async ([platform], opts) => {
           log(`status ${status} - uploaded ${file}`);
         });
 
-        if (filesToReplace.size > 0) {
+        if (filesToInvalidate.size > 0) {
           const { distribution } = config.deployment;
 
           const cloudfront = new CloudFrontClient({ region, credentials });
@@ -160,19 +159,23 @@ const main = async ([platform], opts) => {
             InvalidationBatch: {
               CallerReference: new Date().toISOString(),
               Paths: {
-                Quantity: filesToReplace.size,
-                Items: Array.from(filesToReplace),
+                Quantity: filesToInvalidate.size,
+                Items: Array.from(filesToInvalidate),
               },
             },
           });
           const res = await cloudfront.send(invalidate);
           const status = res.$metadata.httpStatusCode;
           const log = status === 201 ? success : console.log;
-          log(`status ${status} - invalidated ${Array.from(filesToReplace)}`);
+          log(
+            `status ${status} - invalidated ${Array.from(filesToInvalidate)}`
+          );
         }
       }
     } else {
-      console.log(`Creating new directory ${key} in ${bucket}.`);
+      if (key.length > 0) {
+        console.log(`Creating new directory ${key} in ${bucket}.`);
+      }
       uploadFiles(directory);
     }
   }
