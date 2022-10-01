@@ -19,6 +19,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-cloudfront": "^3.181.0",
     "@aws-sdk/client-s3": "^3.181.0",
     "@aws-sdk/credential-providers": "^3.181.0",
     "@googleapis/drive": "^3.0.1",

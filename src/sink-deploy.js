@@ -10,6 +10,10 @@ import {
   PutObjectCommand,
   DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
+import {
+  CloudFrontClient,
+  CreateInvalidationCommand,
+} from "@aws-sdk/client-cloudfront";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
 import { load_config, success } from "./_utils.js";
@@ -47,7 +51,8 @@ const main = async ([platform], opts) => {
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
 
-    const client = new S3Client({ region, credentials: fromIni({ profile }) });
+    const credentials = fromIni({ profile });
+    const client = new S3Client({ region, credentials });
     const list = new ListObjectsCommand({ Bucket: bucket, Prefix: key });
     const response = await client.send(list);
 
@@ -77,6 +82,7 @@ const main = async ([platform], opts) => {
         uploadFiles(directory);
       } else {
         const filesToDelete = Array();
+        const filesToReplace = Array();
         const filesToAdd = Array();
 
         const remote = new Map(content.map(({ Key, ETag }) => [Key, ETag]));
@@ -95,6 +101,7 @@ const main = async ([platform], opts) => {
             filesToDelete.push(key);
           } else if (local.get(key) !== etag) {
             filesToDelete.push(key);
+            filesToReplace.push(key.startsWith("/") ? key : `/${key}`);
           }
         }
 
@@ -140,6 +147,26 @@ const main = async ([platform], opts) => {
           const log = status === 200 ? success : console.log;
           log(`status ${status} - uploaded ${file}`);
         });
+
+        if (filesToReplace.length > 0) {
+          const { distribution } = config.deployment;
+
+          const cloudfront = new CloudFrontClient({ region, credentials });
+          const invalidate = new CreateInvalidationCommand({
+            DistributionId: distribution,
+            InvalidationBatch: {
+              CallerReference: new Date().toISOString(),
+              Paths: {
+                Quantity: filesToReplace.length,
+                Items: filesToReplace,
+              },
+            },
+          });
+          const res = await cloudfront.send(invalidate);
+          const status = res.$metadata.httpStatusCode;
+          const log = status === 200 ? success : console.log;
+          log(`status ${status} - invalidated ${filesToReplace}`);
+        }
       }
     } else {
       console.log(`Creating new directory ${key} in ${bucket}.`);
