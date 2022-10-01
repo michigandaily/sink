@@ -51,6 +51,8 @@ const createInvalidationPath = (fp) => {
   return dir === "." ? `/${basename(fp)}` : `/${dir}/*`;
 };
 
+const depth = (directory) => directory.split("/").length - 1;
+
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
   if (platform === "aws") {
@@ -64,27 +66,33 @@ const main = async ([platform], opts) => {
     const parent = join(build);
     const directory = readDirectory(build);
 
-    const uploadFiles = (files) => {
-      files.forEach(async (file) => {
-        const k = join(key, file.replace(parent, "")).substring(1);
-        const stream = createReadStream(file);
-        const put = new PutObjectCommand({
-          Bucket: bucket,
-          Key: k,
-          Body: stream,
-          ContentType: lookup(extname(file)) || "application/octet-stream",
-        });
-        const res = await client.send(put);
-        const status = res.$metadata.httpStatusCode;
-        const log = status === 200 ? success : console.log;
-        log(`status ${status} - uploaded ${k}`);
+    const uploadFile = async (Bucket, Key, file) => {
+      const stream = createReadStream(file);
+      const put = new PutObjectCommand({
+        Bucket,
+        Key,
+        Body: stream,
+        ContentType: lookup(extname(file)) || "application/octet-stream",
       });
+      const res = await client.send(put);
+      const status = res.$metadata.httpStatusCode;
+      const log = status === 200 ? success : console.log;
+      log(`status ${status} - uploaded ${Key}`);
+    };
+
+    const uploadFiles = async (files) => {
+      for await (const file of files) {
+        const k = join(key, file.replace(parent, "")).substring(1);
+        await uploadFile(bucket, k, file);
+      }
     };
 
     if (Object.hasOwn(response, "Contents")) {
-      const content = response.Contents.filter((d) => !d.Key.endsWith("/"));
+      const content = response.Contents.filter(
+        (d) => !d.Key.endsWith("/")
+      ).sort((a, b) => depth(a.Key) - depth(b.Key));
       if (content.length === 0) {
-        uploadFiles(directory);
+        await uploadFiles(directory);
       } else {
         const filesToDelete = Array();
         const filesToInvalidate = new Set();
@@ -148,21 +156,21 @@ const main = async ([platform], opts) => {
 
         for await (const file of filesToAdd) {
           const fp = join(parent, file.replace(key, ""));
-          const stream = createReadStream(fp);
-          const upload = new PutObjectCommand({
-            Bucket: bucket,
-            Key: file,
-            Body: stream,
-            ContentType: lookup(extname(file)) || "application/octet-stream",
-          });
-          const res = await client.send(upload);
-          const status = res.$metadata.httpStatusCode;
-          const log = status === 200 ? success : console.log;
-          log(`status ${status} - uploaded ${file}`);
+          await uploadFile(bucket, file, fp);
         }
 
         if (filesToInvalidate.size > 0) {
           const { distribution } = config.deployment;
+
+          const wildcards = Array.from(filesToInvalidate).filter((d) =>
+            d.endsWith("*")
+          );
+
+          // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html#InvalidationLimits
+          if (wildcards.length > 15) {
+            filesToInvalidate.clear();
+            filesToInvalidate.add("/*");
+          }
 
           const cloudfront = new CloudFrontClient({ region, credentials });
           const invalidate = new CreateInvalidationCommand({
@@ -187,7 +195,7 @@ const main = async ([platform], opts) => {
       if (key.length > 0) {
         console.log(`Creating new directory ${key} in ${bucket}.`);
       }
-      uploadFiles(directory);
+      await uploadFiles(directory);
     }
   }
 };
