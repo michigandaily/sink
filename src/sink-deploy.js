@@ -82,7 +82,10 @@ const main = async ([platform], opts) => {
 
     const uploadFiles = async (files) => {
       for await (const file of files) {
-        const k = join(key, file.replace(parent, "")).substring(1);
+        let k = join(key, file.replace(parent, ""));
+        if (k.startsWith("/")) {
+          k = k.substring(1);
+        }
         await uploadFile(bucket, k, file);
       }
     };
@@ -102,7 +105,10 @@ const main = async ([platform], opts) => {
         const local = new Map(
           await Promise.all(
             directory.map(async (file) => {
-              const Key = join(key, file.replace(parent, "")).substring(1);
+              let Key = join(key, file.replace(parent, ""));
+              if (Key.startsWith("/")) {
+                Key = Key.substring(1);
+              }
               const ETag = await getFileETag(file);
               return [Key, ETag];
             })
