@@ -70,7 +70,7 @@ To fetch all CSV files that are specified in `fetch`, run `yarn sink csv`.
 
 To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
 
-## AWS S3 deployment
+## AWS S3 deployment with cache invalidation
 
 Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `distribution`, `region`, `bucket`, `key`, `build`, and `profile`.
 
@@ -90,3 +90,13 @@ aws_secret_access_key=<Insert value from "Secret access key" column here>
 ```
 
 Now, you can deploy to S3 by running `yarn sink deploy aws`.
+
+### IAM User permissions
+
+1. Create a new IAM policy with the following services:
+   - **Service**: CloudFront, **Actions**: CreateInvalidation (under the Write access level), **Resources**: Specific, any in this account
+   - **Service**: S3, **Actions**: ListBucket (under the List access level), PutObject (under the Write access level), DeleteObject (under the Write access level), **Resources**: Specific, any bucket and any object.
+2. Name the policy `sink-deploy`.
+3. Create a new IAM user with programmatic access.
+4. Attach the existing `sink-deploy` policy directly.
+5. Download the credentials CSV file.
