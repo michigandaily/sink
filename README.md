@@ -74,7 +74,7 @@ To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
 
 Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `distribution`, `region`, `bucket`, `key`, `build`, and `profile`.
 
-- The `distribution` property specifies the S3 bucket's associated CloudFront distribution. This will be used to invalidate files if needed.
+- The `distribution` property specifies the S3 bucket's associated CloudFront distribution. This will be used to invalidate files if needed. If you do not want to invalidate the bucket's distribution, either set `distribution` as an empty string or don't include the property altogether.
 - The `region` property specifies where the S3 bucket is located.
 - The `bucket` property will be used to determine which S3 bucket to deploy to.
 - The `key` property will be used to determine which sub-directory in the `bucket` to deploy to.
