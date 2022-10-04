@@ -168,6 +168,11 @@ const main = async ([platform], opts) => {
         if (filesToInvalidate.size > 0) {
           const { distribution } = config.deployment;
 
+          if (distribution === undefined || !distribution) {
+            console.log("CloudFront distribution was not specified.");
+            return;
+          }
+
           const wildcards = Array.from(filesToInvalidate).filter((d) =>
             d.endsWith("*")
           );
