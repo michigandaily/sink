@@ -1,9 +1,11 @@
+import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join, extname, dirname } from "node:path";
+import { join, extname, dirname, normalize } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
+import chalk from "chalk";
 import {
   S3Client,
   ListObjectsCommand,
@@ -17,6 +19,8 @@ import {
 import { fromIni } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
 import { load_config, success } from "./_utils.js";
+
+const self = fileURLToPath(import.meta.url);
 
 const readDirectory = (directory) => {
   const files = Array();
@@ -208,15 +212,38 @@ const main = async ([platform], opts) => {
       }
       await uploadFiles(directory);
     }
+  } else if (platform === "github") {
+    const { url, build } = config.deployment;
+
+    const deploy = join(dirname(self), "scripts", "deploy.sh");
+    execSync(`sh ${deploy} ${normalize(build)}`, { stdio: "inherit" });
+
+    const repository = execSync("basename -s .git `git remote get-url origin`")
+      .toString()
+      .trim();
+    const regex = /https:\/\/(.*)\.github\.io/g;
+    const organization = regex.exec(url)[1];
+    console.log(
+      "🔐 Remember to enforce HTTPS in the repository settings at",
+      chalk.yellow(
+        `https://github.com/${organization}/${repository}/settings/pages`
+      )
+    );
+    console.log(
+      "🍪 After enforcement, your graphic will be deployed at",
+      chalk.cyan(url)
+    );
   }
 };
 
-const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.1.1")
+    .version("2.3.0")
     .addArgument(
-      new Argument("<platform>", "platform to deploy to").choices(["aws"])
+      new Argument("<platform>", "platform to deploy to").choices([
+        "aws",
+        "github",
+      ])
     )
     .option("-c, --config <path>", "path to config file")
     .parse();
