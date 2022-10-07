@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join, extname, dirname } from "node:path";
+import { join, extname, dirname, normalize } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
@@ -222,7 +222,7 @@ const main = async ([platform], opts) => {
     };
 
     const deploy = join(dirname(self), "scripts", "deploy.sh");
-    exec(`sh ${deploy} ${dirname(build)}`, true);
+    exec(`sh ${deploy} ${normalize(build)}`, true);
 
     const repository = exec("basename -s .git `git remote get-url origin`");
     const regex = /https:\/\/(.*)\.github\.io/g;
