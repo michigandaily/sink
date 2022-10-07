@@ -220,15 +220,9 @@ const main = async ([platform], opts) => {
     };
 
     const { url, build } = config.deployment;
-    const buildDir = dirname(build);
 
-    const scripts = join(dirname(self), "..", "scripts");
-    const prebuild = join(scripts, "prebuild.sh");
-    const postbuild = join(scripts, "postbuild.sh");
-
-    exec(`sh ${prebuild} ${buildDir}`);
-    exec(`yarn build`);
-    exec(`sh ${postbuild} ${buildDir}`);
+    const deploy = join(dirname(self), "..", "scripts", "deploy.sh");
+    exec(`sh ${deploy} ${dirname(build)}`);
 
     const repository = exec(
       "basename -s .git `git remote get-url origin`",
