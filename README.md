@@ -100,3 +100,14 @@ Now, you can deploy to S3 by running `yarn sink deploy aws`.
 3. Create a new IAM user with programmatic access.
 4. Attach the existing `sink-deploy` policy directly.
 5. Download the credentials CSV file.
+
+## GitHub Pages deployment
+
+Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `url` and `build`.
+
+- The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
+- The `build` property will be used to determine which directory's content will be deployed to GitHub Pages.
+
+You'll also need a `build` script as part of `package.json`'s `scripts` property. Internally, `sink` will run `yarn build`.
+
+Now you can deploy to GitHub Pages by running `yarn sink deploy github`.
