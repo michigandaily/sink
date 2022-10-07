@@ -215,16 +215,12 @@ const main = async ([platform], opts) => {
   } else if (platform === "github") {
     const { url, build } = config.deployment;
 
-    const exec = (command, output = false) => {
-      const stdout = execSync(command).toString().trim();
-      output && stdout && console.log(stdout);
-      return stdout;
-    };
-
     const deploy = join(dirname(self), "scripts", "deploy.sh");
-    exec(`sh ${deploy} ${normalize(build)}`, true);
+    execSync(`sh ${deploy} ${normalize(build)}`, { stdio: "inherit" });
 
-    const repository = exec("basename -s .git `git remote get-url origin`");
+    const repository = execSync("basename -s .git `git remote get-url origin`")
+      .toString()
+      .trim();
     const regex = /https:\/\/(.*)\.github\.io/g;
     const organization = regex.exec(url)[1];
     console.log(
