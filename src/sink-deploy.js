@@ -5,7 +5,7 @@ import { join, extname, dirname } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
-import { yellow, cyan } from "chalk";
+import chalk from "chalk";
 import {
   S3Client,
   ListObjectsCommand,
@@ -229,11 +229,13 @@ const main = async ([platform], opts) => {
     const organization = regex.exec(url)[1];
     console.log(
       "🔐 Remember to enforce HTTPS in the repository settings at",
-      yellow(`https://github.com/${organization}/${repository}/settings/pages`)
+      chalk.yellow(
+        `https://github.com/${organization}/${repository}/settings/pages`
+      )
     );
     console.log(
       "🍪 After enforcement, your graphic will be deployed at",
-      cyan(url)
+      chalk.cyan(url)
     );
   }
 };
