@@ -1,9 +1,11 @@
+import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join, extname, dirname } from "node:path";
 import { createHash } from "node:crypto";
 
 import { program, Argument } from "commander";
+import { yellow, cyan } from "chalk";
 import {
   S3Client,
   ListObjectsCommand,
@@ -17,6 +19,8 @@ import {
 import { fromIni } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
 import { load_config, success } from "./_utils.js";
+
+const self = fileURLToPath(import.meta.url);
 
 const readDirectory = (directory) => {
   const files = Array();
@@ -208,15 +212,49 @@ const main = async ([platform], opts) => {
       }
       await uploadFiles(directory);
     }
+  } else if (platform === "github") {
+    const exec = (command, output = true) => {
+      const stdout = execSync(command).toString().trim();
+      output && stdout && console.log(stdout);
+      return stdout;
+    };
+
+    const { url, build } = config.deployment;
+    const buildDir = dirname(build);
+
+    const scripts = join(dirname(self), "..", "scripts");
+    const prebuild = join(scripts, "prebuild.sh");
+    const postbuild = join(scripts, "postbuild.sh");
+
+    exec(`sh ${prebuild} ${buildDir}`);
+    exec(`yarn build`);
+    exec(`sh ${postbuild} ${buildDir}`);
+
+    const repository = exec(
+      "basename -s .git `git remote get-url origin`",
+      false
+    );
+    const regex = /https:\/\/(.*)\.github\.io/g;
+    const organization = regex.exec(url)[1];
+    console.log(
+      "🔐 Remember to enforce HTTPS in the repository settings at",
+      yellow(`https://github.com/${organization}/${repository}/settings/pages`)
+    );
+    console.log(
+      "🍪 After enforcement, your graphic will be deployed at",
+      cyan(url)
+    );
   }
 };
 
-const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
     .version("2.1.1")
     .addArgument(
-      new Argument("<platform>", "platform to deploy to").choices(["aws"])
+      new Argument("<platform>", "platform to deploy to").choices([
+        "aws",
+        "github",
+      ])
     )
     .option("-c, --config <path>", "path to config file")
     .parse();
