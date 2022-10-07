@@ -221,7 +221,7 @@ const main = async ([platform], opts) => {
       return stdout;
     };
 
-    const deploy = join(dirname(self), "..", "scripts", "deploy.sh");
+    const deploy = join(dirname(self), "scripts", "deploy.sh");
     exec(`sh ${deploy} ${dirname(build)}`, true);
 
     const repository = exec("basename -s .git `git remote get-url origin`");
