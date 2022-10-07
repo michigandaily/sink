@@ -1,6 +1,6 @@
 {
   "name": "sink",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Helper scripts for The Michigan Daily",
   "main": "src/sink.js",
   "bin": {
