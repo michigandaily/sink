@@ -213,21 +213,18 @@ const main = async ([platform], opts) => {
       await uploadFiles(directory);
     }
   } else if (platform === "github") {
-    const exec = (command, output = true) => {
+    const { url, build } = config.deployment;
+
+    const exec = (command, output = false) => {
       const stdout = execSync(command).toString().trim();
       output && stdout && console.log(stdout);
       return stdout;
     };
 
-    const { url, build } = config.deployment;
-
     const deploy = join(dirname(self), "..", "scripts", "deploy.sh");
-    exec(`sh ${deploy} ${dirname(build)}`);
+    exec(`sh ${deploy} ${dirname(build)}`, true);
 
-    const repository = exec(
-      "basename -s .git `git remote get-url origin`",
-      false
-    );
+    const repository = exec("basename -s .git `git remote get-url origin`");
     const regex = /https:\/\/(.*)\.github\.io/g;
     const organization = regex.exec(url)[1];
     console.log(
