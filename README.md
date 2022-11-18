@@ -60,7 +60,7 @@ To fetch all JSON files that are specified in `fetch`, run `yarn sink json`.
 
 ### Fetching a text file
 
-Text files can include HTML, CSS, Markdown, CSV files, etc.
+Text files can include HTML, CSS, Markdown, CSV files, etc. If you want to fetch a JSON file, use `yarn sink json` instead.
 
 1. Set the value of `type` to `text`.
 2. Consider this generalized Google Drive URL: <https://drive.google.com/file/d/FILE_ID/>. You'll need to click "Get link" in the context menu and then click "Copy link" in the popup in order to get a text file's URL.
