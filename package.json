@@ -1,6 +1,6 @@
 {
   "name": "sink",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Helper scripts for The Michigan Daily",
   "main": "src/sink.js",
   "bin": {
@@ -19,17 +19,17 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-cloudfront": "^3.181.0",
-    "@aws-sdk/client-s3": "^3.181.0",
-    "@aws-sdk/credential-providers": "^3.181.0",
-    "@googleapis/drive": "^3.0.1",
-    "@googleapis/sheets": "^3.0.2",
+    "@aws-sdk/client-cloudfront": "^3.214.0",
+    "@aws-sdk/client-s3": "^3.213.0",
+    "@aws-sdk/credential-providers": "^3.213.0",
+    "@googleapis/drive": "^4.0.0",
+    "@googleapis/sheets": "^4.0.0",
     "archieml": "^0.5.0",
-    "chalk": "^5.0.1",
-    "commander": "^9.4.0",
+    "chalk": "^5.1.2",
+    "commander": "^9.4.1",
     "d3-dsv": "^3.0.1",
     "find-up": "^6.3.0",
-    "google-auth-library": "^8.4.0",
+    "google-auth-library": "^8.7.0",
     "html-entities": "^2.3.3",
     "htmlparser2": "^8.0.1",
     "mime-types": "^2.1.35"

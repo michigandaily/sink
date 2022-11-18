@@ -20,7 +20,7 @@
       "auth": "~/.daily-google-services.json"
     },
     {
-      "type": "csv",
+      "type": "text",
       "id": "",
       "output": "",
       "auth": "~/.daily-google-services.json"
