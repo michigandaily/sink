@@ -11,7 +11,7 @@ import {
   has_filled_props,
 } from "./_utils.js";
 
-export const fetchCsv = async ({ id, output, auth }) => {
+export const fetchText = async ({ id, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/drive"];
   const authObject = get_auth(auth, scopes);
 
@@ -26,8 +26,8 @@ export const fetchCsv = async ({ id, output, auth }) => {
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
   config.fetch
-    ?.filter((d) => d.type === "csv" && has_filled_props(d))
-    .forEach(fetchCsv);
+    ?.filter((d) => d.type === "text" && has_filled_props(d))
+    .forEach(fetchText);
 };
 
 const self = fileURLToPath(import.meta.url);
