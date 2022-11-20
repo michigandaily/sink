@@ -41,12 +41,13 @@ In order to fetch files from Google Drive, we have to use an authentication file
 
 To fetch all Google Documents that are specified in `fetch`, run `yarn sink gdoc`.
 
-### Fetching a Google Sheet as a CSV file
+### Fetching a Google Sheet as a CSV file, TSV file or JSON file
 
 1. Set the value of `type` to `sheet`.
 2. Consider this generalized Google Sheet URL: <https://docs.google.com/spreadsheets/d/FILE_ID/edit#gid=SHEET_ID>
 3. Set the value of `id` to `<FILE_ID>`.
 4. Google Sheets require a `sheetId` property in addition to the ones previously mentioned. Set the value of `sheetId` to `<SHEET_ID>`.
+5. To fetch the Google Sheet as a CSV file, use a `.csv` extension for the `output`. To fetch as a TSV file, use a `.tsv` extension. To fetch as a JSON file, use a `.json` extension. Other extensions will default to CSV format.
 
 To fetch all Google Sheets that are specified in `fetch`, run `yarn sink gsheet`.
 

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 import { fileURLToPath } from "node:url";
+import { extname } from "node:path";
 
 import { program } from "commander";
 import { sheets } from "@googleapis/sheets";
-import { csvFormat } from "d3-dsv";
+import { csvFormat, tsvFormat } from "d3-dsv";
 
 import {
   load_config,
@@ -14,19 +15,22 @@ import {
   has_filled_props,
 } from "./_utils.js";
 
-const parse = (res) => {
-  const csv = Array();
+const parse = ({ data: { values } }, extension) => {
+  const data = Array();
 
-  const data = res.data.values;
-  const headers = data.shift().map((h) => h.trim());
-
+  const headers = values.shift().map((h) => h.trim());
   const headerToValue = (d, i) => [headers[i], d];
-
-  data.forEach((row) => {
-    csv.push(Object.fromEntries(row.map(headerToValue)));
+  values.forEach((row) => {
+    data.push(Object.fromEntries(row.map(headerToValue)));
   });
 
-  return csvFormat(csv, headers);
+  if (extension === ".json") {
+    return JSON.stringify(data);
+  } else if (extension === ".tsv") {
+    return tsvFormat(data, headers);
+  } else {
+    return csvFormat(data, headers);
+  }
 };
 
 export const fetchSheet = async ({ id, sheetId, output, auth }) => {
@@ -45,9 +49,9 @@ export const fetchSheet = async ({ id, sheetId, output, auth }) => {
     range: `'${gidQ.data.sheets.pop().properties.title}'`,
   });
 
-  const csv = parse(nameQ);
+  const file = parse(nameQ, extname(output));
 
-  write_file(output, csv);
+  write_file(output, file);
   success(`Wrote output to ${output}`);
 };
 
