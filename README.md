@@ -92,6 +92,8 @@ aws_access_key_id=<Insert value from "Access key ID" column here>
 aws_secret_access_key=<Insert value from "Secret access key" column here>
 ```
 
+You'll also need a `build` script as part of `package.json`'s `scripts` property. Internally, `sink` will run `yarn build`.
+
 Now, you can deploy to S3 by running `yarn sink deploy aws`.
 
 ### IAM User permissions

@@ -60,6 +60,8 @@ const depth = (directory) => directory.split("/").length - 1;
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
   if (platform === "aws") {
+    execSync("yarn build", { stdio: "inherit" });
+
     const { region, bucket, key, build, profile } = config.deployment;
 
     const credentials = fromIni({ profile });
