@@ -13,6 +13,7 @@ import {
   get_auth,
   write_file,
   has_filled_props,
+  fatal_error,
 } from "./_utils.js";
 
 const parse = ({ data: { values } }, extension) => {
@@ -39,11 +40,19 @@ export const fetchSheets = async ({ id, sheetId, output, auth }) => {
 
   const sheet = sheets({ version: "v4", auth: authObject });
 
-  const sheetQ = await sheet.spreadsheets.getByDataFilter({
-    spreadsheetId: id,
-    fields: "sheets(properties(title))",
-    requestBody: sheetId === undefined ? undefined : { dataFilters: [{ gridRange: { sheetId: sheetId } }] }
-  });
+  let sheetQ;
+  try {
+    sheetQ = await sheet.spreadsheets.getByDataFilter({
+      spreadsheetId: id,
+      fields: "sheets(properties(title))",
+      requestBody: sheetId === undefined ? undefined : { dataFilters: [{ gridRange: { sheetId: sheetId } }] }
+    });
+  } catch (e) {
+    fatal_error(`
+    Error when fetching sheet with spreadsheetId ${id}${sheetId === undefined ? "" : ` and sheetId ${sheetId}`}. Check the file identifer or your file access permissions.
+    ${e.stack}
+    `)
+  }
 
   const ranges = sheetQ.data.sheets.map(sheet => `'${sheet.properties.title}'`);
 

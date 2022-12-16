@@ -22,6 +22,7 @@ import {
   get_auth,
   write_file,
   has_filled_props,
+  fatal_error,
 } from "./_utils.js";
 
 const parse = (file) => {
@@ -116,9 +117,17 @@ export const fetchDoc = async ({ id, output, auth }) => {
 
   const gdrive = drive({ version: "v3", auth: authObject });
 
-  const file = await gdrive.files.export({ fileId: id, mimeType: "text/html" });
-  const json = await parse(file);
+  let file;
+  try {
+    file = await gdrive.files.export({ fileId: id, mimeType: "text/html" });
+  } catch (e) {
+    fatal_error(`
+    Error when fetching document with fileId ${id}. Check the file identifer or your file access permissions.
+    ${e.stack}
+    `);
+  }
 
+  const json = await parse(file);
   write_file(output, JSON.stringify(json));
   success(`Wrote output to ${output}`);
 };
