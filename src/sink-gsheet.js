@@ -34,7 +34,7 @@ const parse = ({ data: { values } }, extension) => {
   }
 };
 
-export const fetchSheets = async ({ id, sheetId, output, auth }) => {
+export const fetchSheets = async ({ id, sheetId, output, auth, extension }) => {
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
   const authObject = get_auth(auth, scopes);
 
@@ -65,9 +65,9 @@ export const fetchSheets = async ({ id, sheetId, output, auth }) => {
     nameQ.data.valueRanges.forEach(({ range, values }) => {
       const [r] = range.split("!");
       const title = r.replaceAll("'", "");
-      const filePath = join(output, `${title}.csv`);
+      const filePath = join(output, `${title}${extension ?? ".csv"}`);
 
-      const file = parse({ data: { values } }, ".csv");
+      const file = parse({ data: { values } }, extension ?? ".csv");
       write_file(filePath, file);
       success(`Wrote output to ${filePath}`);
     });
