@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { fileURLToPath } from "node:url";
-import { extname } from "node:path";
+import { extname, join } from "node:path";
 
 import { program } from "commander";
 import { sheets } from "@googleapis/sheets";
@@ -33,33 +33,52 @@ const parse = ({ data: { values } }, extension) => {
   }
 };
 
-export const fetchSheet = async ({ id, sheetId, output, auth }) => {
+export const fetchSheets = async ({ id, sheetId, output, auth }) => {
   const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
   const authObject = get_auth(auth, scopes);
 
   const sheet = sheets({ version: "v4", auth: authObject });
-  const gidQ = await sheet.spreadsheets.getByDataFilter({
+
+  const sheetQ = await sheet.spreadsheets.getByDataFilter({
     spreadsheetId: id,
     fields: "sheets(properties(title))",
-    requestBody: { dataFilters: [{ gridRange: { sheetId: sheetId } }] },
+    requestBody: sheetId === undefined ? undefined : { dataFilters: [{ gridRange: { sheetId: sheetId } }] }
   });
 
-  const nameQ = await sheet.spreadsheets.values.get({
-    spreadsheetId: id,
-    range: `'${gidQ.data.sheets.pop().properties.title}'`,
-  });
+  const ranges = sheetQ.data.sheets.map(sheet => `'${sheet.properties.title}'`);
 
-  const file = parse(nameQ, extname(output));
+  if (sheetId === undefined) {
+    const nameQ = await sheet.spreadsheets.values.batchGet({
+      spreadsheetId: id,
+      ranges
+    });
 
-  write_file(output, file);
-  success(`Wrote output to ${output}`);
+    nameQ.data.valueRanges.forEach(({ range, values }) => {
+      const [r] = range.split("!");
+      const title = r.replaceAll("'", "");
+      const filePath = join(output, `${title}.csv`);
+
+      const file = parse({ data: { values } }, ".csv");
+      write_file(filePath, file);
+      success(`Wrote output to ${filePath}`);
+    });
+  } else {
+    const nameQ = await sheet.spreadsheets.values.get({
+      spreadsheetId: id,
+      range: ranges[0]
+    });
+
+    const file = parse(nameQ, extname(output));
+    write_file(output, file);
+    success(`Wrote output to ${output}`);
+  }
 };
 
 async function main(opts) {
   const { config } = await load_config(opts.config);
   config.fetch
     ?.filter((d) => d.type === "sheet" && has_filled_props(d))
-    .forEach(fetchSheet);
+    .forEach(fetchSheets);
 }
 
 const self = fileURLToPath(import.meta.url);
