@@ -35,12 +35,19 @@ export const success = (message) => {
 };
 
 export const get_auth = (path, scopes) => {
+  if (path === undefined || typeof path !== "string") {
+    fatal_error(`
+    Missing "auth" property when trying to find account credentials.
+    Configure your "auth" properties in config.json.
+    `);
+  }
+
   const file = path.startsWith("~") ? path.replace("~", homedir()) : path;
   if (!existsSync(file)) {
     fatal_error(`
-  Could not open service account credentials at ${file}.
-  Reconfigure your auth properties in config.json or download the credentials file.
-  `);
+    Could not open service account credentials at ${file}.
+    Reconfigure your "auth" properties in config.json or download the credentials file.
+    `);
   }
 
   return new GoogleAuth({ keyFile: file, scopes });
