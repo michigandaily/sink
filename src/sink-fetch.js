@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { program } from "commander";
 
 import { fetchDoc } from "./sink-gdoc.js";
-import { fetchSheet } from "./sink-gsheet.js";
+import { fetchSheets } from "./sink-gsheet.js";
 import { fetchJson } from "./sink-json.js";
 import { fetchText } from "./sink-text.js";
 import { load_config, fatal_error, has_filled_props } from "./_utils.js";
@@ -11,7 +11,7 @@ import { load_config, fatal_error, has_filled_props } from "./_utils.js";
 const main = async (opts) => {
   const typeToFunction = {
     doc: fetchDoc,
-    sheet: fetchSheet,
+    sheet: fetchSheets,
     json: fetchJson,
     text: fetchText,
   };
