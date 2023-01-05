@@ -23,7 +23,7 @@ Create a configuration file (i.e. `config.json`). The JSON file should have a `f
 }
 ```
 
-You can also configure sink with a Javascript file, by exporting the JSON config as the default export.
+You can also configure `sink` with a JavaScript file by exporting the JSON config as the default export.
 
 ### Specifying the output file path
 
