@@ -26,7 +26,7 @@ export const load_config = async (configFile = null) => {
   const searchFiles = configFile ? [configFile, ...defaults] : defaults
   for (const searchFile of searchFiles) {
     const path = await findUp(searchFile);
-    if (typeof path == "undefined") continue;
+    if (typeof path === "undefined") continue;
     if (_is_js_config(path)) {
       return await read_js_config(path)
     }
