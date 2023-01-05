@@ -240,7 +240,7 @@ const main = async ([platform], opts) => {
 
 if (process.argv[1] === self) {
   program
-    .version("2.5.1")
+    .version("2.6.0")
     .addArgument(
       new Argument("<platform>", "platform to deploy to").choices([
         "aws",

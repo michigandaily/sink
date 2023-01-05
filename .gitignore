@@ -4,6 +4,7 @@ auth.json
 
 *.csv
 *.json
+*.config.js
 !config.example.json
 
 dist/*
