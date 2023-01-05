@@ -23,6 +23,8 @@ Create a configuration file (i.e. `config.json`). The JSON file should have a `f
 }
 ```
 
+You can also configure `sink` with a JavaScript file by exporting the JSON config as the default export.
+
 ### Specifying the output file path
 
 For each `output` property, specify a path relative to `config.json` or an absolute path. When a fetch command is run, the relevant file(s) will be written to the `output` path.
