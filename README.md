@@ -6,11 +6,13 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 ## Installation
 
-Run `yarn add --dev michigandaily/sink`
+Run `yarn add --dev michigandaily/sink` to get the latest version.
+
+If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.6.0`).
 
 ## Google Drive fetch
 
-Create a configuration file (i.e. `config.json`). The JSON file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
+Create a configuration file (e.g `sink.config.json` or `config.json`). The JSON file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
 
 ```json
 {
@@ -23,11 +25,25 @@ Create a configuration file (i.e. `config.json`). The JSON file should have a `f
 }
 ```
 
-You can also configure `sink` with a JavaScript file by exporting the JSON config as the default export.
+You can also configure `sink` with a JavaScript file (e.g. `sink.config.js`) by exporting the JSON config as the default export. This may be particularly useful if there are many properties with common values.
+
+```javascript
+// sink.config.js
+export default {
+  fetch: [
+    { type: "", id: "", output: "", auth: "" },
+    { type: "", id: "", output: "", auth: "" },
+    { type: "", id: "", output: "", auth: "" },
+    // ...
+  ]
+}
+```
+
+By default, `sink` will read `sink.config.js`, `sink.config.json` or `config.json`. You can specify a different configuration file path using the `--config <path>` flag (or `-c <path>` as shorthand).
 
 ### Specifying the output file path
 
-For each `output` property, specify a path relative to `config.json` or an absolute path. When a fetch command is run, the relevant file(s) will be written to the `output` path.
+For each `output` property, specify an absolute path or a path relative to your configuration file. When a fetch command is run, the relevant file(s) will be written to the `output` path.
 
 ### Specifying the authentication file path
 
@@ -79,7 +95,7 @@ To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
 
 ## AWS S3 deployment with cache invalidation
 
-Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `distribution`, `region`, `bucket`, `key`, `build`, and `profile`.
+Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `distribution`, `region`, `bucket`, `key`, `build`, and `profile`.
 
 - The `distribution` property specifies the S3 bucket's associated CloudFront distribution. This will be used to invalidate files if needed. If you do not want to invalidate the bucket's distribution, either set `distribution` as an empty string or don't include the property altogether.
 - The `region` property specifies where the S3 bucket is located.
@@ -112,7 +128,7 @@ Now, you can deploy to S3 by running `yarn sink deploy aws`.
 
 ## GitHub Pages deployment
 
-Create a configuration file (i.e. `config.json`). The JSON file should have a `deployment` property with an object value. The value should include the following properties: `url` and `build`.
+Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `url` and `build`.
 
 - The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
 - The `build` property will be used to determine which directory's content will be deployed to GitHub Pages.
