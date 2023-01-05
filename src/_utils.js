@@ -6,7 +6,7 @@ import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
 
 const _is_js_config = (filename) => {
-  return filename.slice(-2) == "js";
+  return filename.slice(-2) === "js";
 }
 
 export const read_json_config = (path) => {
