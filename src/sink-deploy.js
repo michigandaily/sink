@@ -57,12 +57,29 @@ const createInvalidationPath = (fp) => {
 
 const depth = (directory) => directory.split("/").length - 1;
 
+// For reading in input with node
+const readline = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
   if (platform === "aws") {
     execSync("yarn build", { stdio: "inherit" });
 
     const { region, bucket, key, build, profile } = config.deployment;
+    if (key.length <= 1) {
+      readline.question(
+        'Please confirm that you want to deploy to root by typing "Confirm"', confirm => {
+          if (confirm != "Confirm") {
+            console.log('Process canceled -- please rerun and write "Confirm" if you want to deploy with this key.');
+            return;
+          }
+        }
+      )
+    }
+
 
     const credentials = fromIni({ profile });
     const client = new S3Client({ region, credentials });
