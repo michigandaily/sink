@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join, extname, dirname, normalize } from "node:path";
 import { createHash } from "node:crypto";
+import { createInterface } from "node:readline";
+import { fatal_error } from "./_utils.js"; 
 
 import { program, Argument } from "commander";
 import chalk from "chalk";
@@ -19,6 +21,7 @@ import {
 import { fromIni } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
 import { load_config, success } from "./_utils.js";
+import readline from "readline";
 
 const self = fileURLToPath(import.meta.url);
 
@@ -57,10 +60,9 @@ const createInvalidationPath = (fp) => {
 
 const depth = (directory) => directory.split("/").length - 1;
 
-// For reading in input with node
-const readline = require('readline').createInterface({
+const node_readline = createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 const main = async ([platform], opts) => {
@@ -70,16 +72,21 @@ const main = async ([platform], opts) => {
 
     const { region, bucket, key, build, profile } = config.deployment;
     if (key.length <= 1) {
-      readline.question(
-        'Please confirm that you want to deploy to root by typing "Confirm"', confirm => {
+      await new Promise((resolve, reject) => {
+        node_readline.question(
+        'Please confirm that you want to deploy to root by typing "Confirm": ', confirm => {
+          if (confirm == "Confirm") {
+            resolve();
+          }
           if (confirm != "Confirm") {
-            console.log('Process canceled -- please rerun and write "Confirm" if you want to deploy with this key.');
-            return;
+            reject();
+            fatal_error('Process canceled -- please rerun and write "Confirm" if you want to deploy with this key.');
           }
         }
       )
+      }
+      )
     }
-
 
     const credentials = fromIni({ profile });
     const client = new S3Client({ region, credentials });
