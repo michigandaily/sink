@@ -83,8 +83,6 @@ const main = async ([platform], opts) => {
           }
         )
       });
-
-      console.log("tmp");
     }
 
     execSync("yarn build", { stdio: "inherit" });
@@ -265,7 +263,7 @@ const main = async ([platform], opts) => {
 
 if (process.argv[1] === self) {
   program
-    .version("2.6.0")
+    .version("2.7.0")
     .addArgument(
       new Argument("<platform>", "platform to deploy to").choices([
         "aws",
