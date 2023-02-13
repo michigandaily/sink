@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join, extname, dirname, normalize } from "node:path";
 import { createHash } from "node:crypto";
+import { createInterface } from "node:readline";
+import { fatal_error } from "./_utils.js";
 
 import { program, Argument } from "commander";
 import chalk from "chalk";
@@ -57,29 +59,35 @@ const createInvalidationPath = (fp) => {
 
 const depth = (directory) => directory.split("/").length - 1;
 
-// For reading in input with node
-const readline = require('readline').createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
-  if (platform === "aws") {
-    execSync("yarn build", { stdio: "inherit" });
 
+  if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
     if (key.length <= 1) {
-      readline.question(
-        'Please confirm that you want to deploy to root by typing "Confirm"', confirm => {
-          if (confirm != "Confirm") {
-            console.log('Process canceled -- please rerun and write "Confirm" if you want to deploy with this key.');
-            return;
+      const prompt = createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      await new Promise((res, rej) => {
+        prompt.question(
+          'Please confirm that you want to deploy to root by typing "Confirm": ', confirm => {
+            prompt.close();
+            if (confirm === "Confirm") {
+              res();
+            } else if (confirm !== "Confirm") {
+              rej();
+              fatal_error('Process canceled — please rerun and write "Confirm" if you want to deploy with this key.');
+            }
           }
-        }
-      )
+        )
+      });
+
+      console.log("tmp");
     }
 
+    execSync("yarn build", { stdio: "inherit" });
 
     const credentials = fromIni({ profile });
     const client = new S3Client({ region, credentials });
