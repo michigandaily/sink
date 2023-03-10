@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
+import { pathToFileURL } from "node:url";
 
 import chalk from "chalk";
 import { GoogleAuth } from "google-auth-library";
@@ -14,7 +15,7 @@ export const read_json_config = (path) => {
 }
 
 export const read_js_config = async (path) => {
-  const config = (await import(path)).default
+  const config = (await import(pathToFileURL(path))).default
   return { config }
 }
 
