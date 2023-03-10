@@ -8,7 +8,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 Run `yarn add --dev michigandaily/sink` to get the latest version.
 
-If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.7.0`).
+If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.7.1`).
 
 ## Google Drive fetch
 
