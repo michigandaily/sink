@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream } from "node:fs";
-import { join, extname, dirname, normalize } from "node:path";
+import { join, extname, dirname, normalize, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
 import { fatal_error } from "./_utils.js";
@@ -28,7 +28,7 @@ const readDirectory = (directory) => {
   const files = Array();
   const dir = readdirSync(directory);
   dir.forEach((file) => {
-    const path = join(directory, file);
+    const path = posix.join(directory, file);
     if (lstatSync(path).isDirectory()) {
       files.push(...readDirectory(path));
     } else {
@@ -92,7 +92,7 @@ const main = async ([platform], opts) => {
     const list = new ListObjectsCommand({ Bucket: bucket, Prefix: key });
     const response = await client.send(list);
 
-    const parent = join(build);
+    const parent = posix.join(build);
     const directory = readDirectory(build);
 
     const uploadFile = async (Bucket, Key, file) => {
@@ -111,7 +111,7 @@ const main = async ([platform], opts) => {
 
     const uploadFiles = async (files) => {
       for await (const file of files) {
-        let k = join(key, file.replace(parent, ""));
+        let k = posix.join(key, file.replace(parent, ""));
         if (k.startsWith("/")) {
           k = k.substring(1);
         }
@@ -134,7 +134,7 @@ const main = async ([platform], opts) => {
         const local = new Map(
           await Promise.all(
             directory.map(async (file) => {
-              let Key = join(key, file.replace(parent, ""));
+              let Key = posix.join(key, file.replace(parent, ""));
               if (Key.startsWith("/")) {
                 Key = Key.substring(1);
               }
@@ -190,7 +190,7 @@ const main = async ([platform], opts) => {
         }
 
         for await (const file of filesToAdd) {
-          const fp = join(parent, file.replace(key, ""));
+          const fp = posix.join(parent, file.replace(key, ""));
           await uploadFile(bucket, file, fp);
         }
 

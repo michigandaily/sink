@@ -1,6 +1,7 @@
 node_modules/
 .DS_Store
 auth.json
+yarn-error.log
 
 *.csv
 *.json
