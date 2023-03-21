@@ -8,7 +8,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 Run `yarn add --dev michigandaily/sink` to get the latest version.
 
-If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.7.2`).
+If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.7.3`).
 
 ## Google Drive fetch
 
@@ -136,3 +136,7 @@ Create a configuration file. The file should have a `deployment` property with a
 You'll also need a `build` script as part of `package.json`'s `scripts` property. Internally, `sink` will run `yarn build`.
 
 Now you can deploy to GitHub Pages by running `yarn sink deploy github`.
+
+## Troubleshooting
+
+In the case that you get a `RequestTimeTooSkewed` when trying to interact with AWS, you may need to [set your system clock](https://stackoverflow.com/questions/4770635/s3-error-the-difference-between-the-request-time-and-the-current-time-is-too-la) to the correct time.
