@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { posix } from "node:path";
 
 import { program } from "commander";
 import { drive } from "@googleapis/drive";
@@ -32,11 +33,31 @@ export const fetchJson = async ({ id, output, auth }) => {
   success(`Wrote output to ${output}`);
 };
 
+export const fetchJsonFolder = async ({ id, output, auth }) => {
+  const scopes = ["https://www.googleapis.com/auth/drive"];
+  const authObject = get_auth(auth, scopes);
+
+  const gdrive = drive({ version: "v3", auth: authObject });
+
+  const files = await gdrive.files.list({
+    pageSize: 1000,
+    q: `'${id}' in parents and (mimeType = 'application/json' or mimeType = 'application/geo+json')`,
+  });
+
+  files.data.files.forEach(({ id, name }) => {
+    fetchJson({ id, output: posix.join(output, name), auth });
+  })
+}
+
 const main = async (opts) => {
   const { config } = await load_config(opts.config);
   config.fetch
     ?.filter((d) => d.type === "json" && has_filled_props(d))
     .forEach(fetchJson);
+
+  config.fetch
+    ?.filter((d) => d.type === "folder:json" && has_filled_props(d))
+    .forEach(fetchJsonFolder);
 };
 
 const self = fileURLToPath(import.meta.url);

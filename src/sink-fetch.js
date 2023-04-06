@@ -4,7 +4,7 @@ import { program } from "commander";
 
 import { fetchDoc } from "./sink-gdoc.js";
 import { fetchSheets } from "./sink-gsheet.js";
-import { fetchJson } from "./sink-json.js";
+import { fetchJson, fetchJsonFolder } from "./sink-json.js";
 import { fetchText } from "./sink-text.js";
 import { load_config, fatal_error, has_filled_props } from "./_utils.js";
 
@@ -14,6 +14,7 @@ const main = async (opts) => {
     sheet: fetchSheets,
     json: fetchJson,
     text: fetchText,
+    "folder:json": fetchJsonFolder,
   };
 
   const { config } = await load_config(opts.config);
