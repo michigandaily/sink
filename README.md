@@ -39,7 +39,7 @@ export default {
 }
 ```
 
-By default, `sink` will read `sink.config.js`, `sink.config.json` or `config.json`. You can specify a different configuration file path using the `--config <path>` flag (or `-c <path>` as shorthand).
+By default, `sink` will read `sink.config.js`, `sink.config.mjs`, `sink.config.cjs`, `sink.config.json` or `config.json`. You can specify a different configuration file path using the `--config <path>` flag (or `-c <path>` as shorthand).
 
 ### Specifying the output file path
 

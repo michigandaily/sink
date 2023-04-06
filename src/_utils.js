@@ -24,7 +24,7 @@ export const has_filled_props = (o) => Object.values(o).every((v) => v.length);
 
 // Search directory for configuration file
 export const load_config = async (configFile = null) => {
-  const defaults = ["sink.config.js", "sink.config.json", "config.json"];
+  const defaults = ["sink.config.js", "sink.config.mjs", "sink.config.cjs", "sink.config.json", "config.json"];
   const searchFiles = configFile ? [configFile, ...defaults] : defaults
   for (const searchFile of searchFiles) {
     const path = await findUp(searchFile);
@@ -58,7 +58,7 @@ export const get_auth = (path, scopes) => {
   if (path === undefined || typeof path !== "string") {
     fatal_error(`
     Missing "auth" property when trying to find account credentials.
-    Configure your "auth" properties in config.json.
+    Configure the "auth" properties in your configuration file.
     `);
   }
 
@@ -66,7 +66,7 @@ export const get_auth = (path, scopes) => {
   if (!existsSync(file)) {
     fatal_error(`
     Could not open service account credentials at ${file}.
-    Reconfigure your "auth" properties in config.json or download the credentials file.
+    Reconfigure the "auth" properties in your configuration file or download the credentials file.
     `);
   }
 
