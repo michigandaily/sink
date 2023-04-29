@@ -72,13 +72,13 @@ const main = async ([platform], opts) => {
 
       await new Promise((res, rej) => {
         prompt.question(
-          'Please confirm that you want to deploy to root by typing "Confirm": ', confirm => {
+          'Are you sure you want to deploy to the bucket root? [Y/n]', confirm => {
             prompt.close();
-            if (confirm === "Confirm") {
+            if (confirm === "Y") {
               res();
-            } else if (confirm !== "Confirm") {
+            } else  {
               rej();
-              fatal_error('Process canceled — please rerun and write "Confirm" if you want to deploy with this key.');
+              fatal_error('Deployment cancelled.');
             }
           }
         )
