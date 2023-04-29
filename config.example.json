@@ -4,26 +4,26 @@
       "type": "doc",
       "id": "",
       "output": "",
-      "auth": "~/.daily-google-services.json"
+      "auth": "~/.sink-google-auth-service-account.json"
     },
     {
       "type": "sheet",
       "id": "",
       "sheetId": "0",
       "output": "",
-      "auth": "~/.daily-google-services.json"
+      "auth": "~/.sink-google-auth-service-account.json"
     },
     {
       "type": "json",
       "id": "",
       "output": "",
-      "auth": "~/.daily-google-services.json"
+      "auth": "~/.sink-google-auth-service-account.json"
     },
     {
       "type": "text",
       "id": "",
       "output": "",
-      "auth": "~/.daily-google-services.json"
+      "auth": "~/.sink-google-auth-service-account.json"
     }
   ],
   "deployment": {
