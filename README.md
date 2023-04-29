@@ -49,7 +49,7 @@ For each `output` property, specify an absolute path or a path relative to your 
 
 In order to fetch files from Google Drive, we have to use an authentication file associated with a Google Cloud Platform (GCP) service account with sufficient view permissions.
 
-> To Daily staffers: ask a managing online editor for access to this authentication file. They will retrieve it for you from 1Password via a private link. The file will be called `.daily-google-services.json`. It is recommended that you place this at the home directory of your computer (i.e. `~`) and specify the `auth` property as `~/.daily-google-services.json`. Note the `client_email` property inside the authentication file. That email must have view access to files that you wish to fetch.
+> To Daily staffers: ask a managing online editor for access to this authentication file. They will retrieve it for you from 1Password via a private link. The file will be called `.sink-google-auth-service-account.json`. It is recommended that you place this at the home directory of your computer (i.e. `~`) and specify the `auth` property as `~/.sink-google-auth-service-account.json`. Note the `client_email` property inside the authentication file. That email must have view access to files that you wish to fetch.
 
 ### Fetching an ArchieML Google Document as a JSON file
 
@@ -92,6 +92,25 @@ To fetch all text files that are specified in `fetch`, run `yarn sink text`.
 ### Fetching everything
 
 To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
+
+### Creating a service account
+
+In order to create a service account key file (i.e., `.sink-google-auth-service-account.json`), follow these steps:
+
+1. Go to the Google Cloud Platform console.
+2. If there is no project associated with sink, create a new project.
+3. Access the **IAM & Admin** dashboard.
+4. Click on the **Service Accounts** tab.
+5. Click on the **Create Service Account** button.
+6. Provide an appropriate name, identifier and description for the service account.
+7. Create the service account.
+8. On the dashboard listing the service accounts, click on the three dots on the right side of the service account you just created under the **Actions** column.
+9. Add a new key using JSON format.
+10. Save the JSON file to your computer.
+11. Rename the JSON file to `.sink-google-auth-service-account.json`.
+12. Place the JSON file in your home directory (i.e., `~`).
+
+For security purposes, the service account and associated client email should be regenerated periodically.
 
 ## AWS S3 deployment with cache invalidation
 
