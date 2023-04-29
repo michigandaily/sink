@@ -4,7 +4,6 @@ import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join, extname, dirname, normalize, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
-import { fatal_error } from "./_utils.js";
 
 import { program, Argument } from "commander";
 import chalk from "chalk";
@@ -20,7 +19,8 @@ import {
 } from "@aws-sdk/client-cloudfront";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
-import { load_config, success } from "./_utils.js";
+
+import { load_config, success, fatal_error } from "./_utils.js";
 
 const self = fileURLToPath(import.meta.url);
 
