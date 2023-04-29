@@ -91,6 +91,8 @@ export const get_auth = (path, scopes) => {
       delete token.clientPath;
 
       client.setCredentials(token);
+
+      return client;
     }
   } else {
     fatal_error(`Could not parse authentication file type ${auth.type} at ${file}`);
