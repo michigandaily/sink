@@ -6,6 +6,6 @@ yarn-error.log
 *.csv
 *.json
 *.config.js
-!config.example.json
+!example.config.js
 
 dist/*

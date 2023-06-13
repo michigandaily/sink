@@ -12,20 +12,7 @@ If you want to install a specifc version, add a version tag at the end of the li
 
 ## Google Drive fetch
 
-Create a configuration file (e.g `sink.config.json` or `config.json`). The JSON file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
-
-```json
-{
-  "fetch": [
-    { "type": "", "id": "", "output": "", "auth": "" },
-    { "type": "", "id": "", "output": "", "auth": "" },
-    { "type": "", "id": "", "output": "", "auth": "" },
-    "..."
-  ]
-}
-```
-
-You can also configure `sink` with a JavaScript file (e.g. `sink.config.js`) by exporting the JSON config as the default export. This may be particularly useful if there are many properties with common values.
+Create a configuration file (e.g. `sink.config.js`). The JavaScript file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
 
 ```javascript
 // sink.config.js
@@ -35,6 +22,19 @@ export default {
     { type: "", id: "", output: "", auth: "" },
     { type: "", id: "", output: "", auth: "" },
     // ...
+  ]
+}
+```
+
+You can also configure `sink` with a JSON file (e.g `sink.config.json` or `config.json`).
+
+```json
+{
+  "fetch": [
+    { "type": "", "id": "", "output": "", "auth": "" },
+    { "type": "", "id": "", "output": "", "auth": "" },
+    { "type": "", "id": "", "output": "", "auth": "" },
+    "..."
   ]
 }
 ```
