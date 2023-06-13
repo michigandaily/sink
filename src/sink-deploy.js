@@ -261,11 +261,6 @@ const main = async ([platform], opts) => {
       }
     );
 
-    const worktreeDir = `.sink-github-deploy-worktree`;
-    if (existsSync(worktreeDir)) {
-      rmSync(worktreeDir, { recursive: true, force: true });
-    }
-
     if (!url) {
       return;
     }
