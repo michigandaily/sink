@@ -4,7 +4,9 @@ git worktree add --detach $1
 (cd $1; git reset --hard)
 (cd $1; git pull -s ours --no-edit origin gh-pages --allow-unrelated-histories || echo "Could not pull from origin.")
 
-yarn build
+if [ $2 = "true" ]; then
+  yarn build
+fi
 
 BRANCH=$(git branch --show-current)
 (cd $1; git add --all)

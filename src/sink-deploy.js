@@ -62,6 +62,8 @@ const depth = (directory) => directory.split("/").length - 1;
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
 
+  const shouldBuild = opts.skipBuild === undefined;
+
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
     if (key.length <= 1) {
@@ -85,7 +87,9 @@ const main = async ([platform], opts) => {
       });
     }
 
-    execSync("yarn build", { stdio: "inherit" });
+    if (shouldBuild) {
+      execSync("yarn build", { stdio: "inherit" });
+    }
 
     const credentials = fromIni({ profile });
     const client = new S3Client({ region, credentials });
@@ -241,7 +245,7 @@ const main = async ([platform], opts) => {
     const { url, build } = config.deployment;
 
     const deploy = join(dirname(self), "scripts", "deploy.sh");
-    execSync(`sh ${deploy} ${normalize(build)}`, { stdio: "inherit" });
+    execSync(`sh ${deploy} ${normalize(build)} ${shouldBuild}`, { stdio: "inherit" });
 
     const repository = execSync("basename -s .git `git remote get-url origin`")
       .toString()
@@ -270,6 +274,7 @@ if (process.argv[1] === self) {
         "github",
       ])
     )
+    .option("-s, --skip-build", "skip build step")
     .option("-c, --config <path>", "path to config file")
     .parse();
 
