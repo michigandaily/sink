@@ -5,7 +5,7 @@ if [[ $2 = "true" ]]
 then
   yarn build
 else
-  echo "Skipping build step"
+  echo "Skipping build step."
 fi
 
 # initialize worktree

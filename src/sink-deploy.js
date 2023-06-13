@@ -96,6 +96,8 @@ const main = async ([platform], opts) => {
 
     if (shouldBuild) {
       execSync("yarn build", { stdio: "inherit" });
+    } else {
+      console.log("Skipping build step.")
     }
 
     const credentials = fromIni({ profile });
