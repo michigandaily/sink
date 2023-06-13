@@ -147,10 +147,10 @@ Now, you can deploy to S3 by running `yarn sink deploy aws`.
 
 ## GitHub Pages deployment
 
-Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `url` and `build`.
+Create a configuration file. The file should have a `deployment` property with an object value. The value should include a `build` property. Optionally, the value can also include a `url` property.
 
-- The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
 - The `build` property will be used to determine which directory's content will be deployed to GitHub Pages.
+- The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
 
 You'll also need a `build` script as part of `package.json`'s `scripts` property. Internally, `sink` will run `yarn build`. You can skip the build process by adding a `--skip-build` or `-s` flag.
 

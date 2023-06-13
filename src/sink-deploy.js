@@ -97,7 +97,7 @@ const main = async ([platform], opts) => {
     if (shouldBuild) {
       execSync("yarn build", { stdio: "inherit" });
     } else {
-      console.log("Skipping build step.")
+      console.log("Skipping build step.");
     }
 
     const credentials = fromIni({ profile });
@@ -263,21 +263,29 @@ const main = async ([platform], opts) => {
       rmSync(worktreeDir, { recursive: true, force: true });
     }
 
+    if (!url) {
+      return;
+    }
+
     const repository = execSync("basename -s .git `git remote get-url origin`")
       .toString()
       .trim();
-    const regex = /https:\/\/(.*)\.github\.io/g;
-    const organization = regex.exec(url)[1];
-    console.log(
-      "🔐 Remember to enforce HTTPS in the repository settings at",
-      chalk.yellow(
-        `https://github.com/${organization}/${repository}/settings/pages`
-      )
-    );
-    console.log(
-      "🍪 After enforcement, your graphic will be deployed at",
-      chalk.cyan(url)
-    );
+    const regex = /^https?:\/\/([a-zA-Z0-9-_]*)\.github\.io/g;
+    const match = regex.exec(url);
+    if (match) {
+      const organization = match[1];
+
+      console.log(
+        "🔐 Remember to enforce HTTPS in the repository settings at",
+        chalk.yellow(
+          `https://github.com/${organization}/${repository}/settings/pages`
+        )
+      );
+      console.log(
+        "🍪 After enforcement, your graphic will be deployed at",
+        chalk.cyan(url)
+      );
+    }
   }
 };
 
