@@ -1,6 +1,12 @@
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { readdirSync, lstatSync, createReadStream } from "node:fs";
+import {
+  readdirSync,
+  lstatSync,
+  createReadStream,
+  existsSync,
+  rmSync,
+} from "node:fs";
 import { join, extname, dirname, normalize, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
@@ -74,16 +80,17 @@ const main = async ([platform], opts) => {
 
       await new Promise((res, rej) => {
         prompt.question(
-          'Are you sure you want to deploy to the bucket root? [Y/n]', confirm => {
+          "Are you sure you want to deploy to the bucket root? [Y/n]",
+          (confirm) => {
             prompt.close();
             if (confirm === "Y") {
               res();
-            } else  {
+            } else {
               rej();
-              fatal_error('Deployment cancelled.');
+              fatal_error("Deployment cancelled.");
             }
           }
-        )
+        );
       });
     }
 
@@ -245,7 +252,14 @@ const main = async ([platform], opts) => {
     const { url, build } = config.deployment;
 
     const deploy = join(dirname(self), "scripts", "deploy.sh");
-    execSync(`sh ${deploy} ${normalize(build)} ${shouldBuild}`, { stdio: "inherit" });
+    execSync(`sh ${deploy} ${normalize(build)} ${shouldBuild}`, {
+      stdio: "inherit",
+    });
+
+    const worktreeDir = `.sink-github-deploy-worktree-${normalize(build)}`;
+    if (existsSync(worktreeDir)) {
+      rmSync(worktreeDir, { recursive: true, force: true });
+    }
 
     const repository = execSync("basename -s .git `git remote get-url origin`")
       .toString()
