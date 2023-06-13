@@ -251,12 +251,15 @@ const main = async ([platform], opts) => {
       await uploadFiles(directory);
     }
   } else if (platform === "github") {
-    const { url, build } = config.deployment;
+    const { build, branch, url } = config.deployment;
 
     const deploy = join(dirname(self), "scripts", "deploy.sh");
-    execSync(`sh ${deploy} ${normalize(build)} ${shouldBuild}`, {
-      stdio: "inherit",
-    });
+    execSync(
+      `sh ${deploy} ${normalize(build)} ${shouldBuild} ${branch ?? "gh-pages"}`,
+      {
+        stdio: "inherit",
+      }
+    );
 
     const worktreeDir = `.sink-github-deploy-worktree-${normalize(build)}`;
     if (existsSync(worktreeDir)) {
