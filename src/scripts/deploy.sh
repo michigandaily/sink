@@ -9,6 +9,7 @@ else
 fi
 
 # initialize worktree
+rm -rf $WORKTREE_PATH
 git worktree add --detach $WORKTREE_PATH
 (cd $WORKTREE_PATH; git checkout --orphan gh-pages)
 (cd $WORKTREE_PATH; git reset --hard)
