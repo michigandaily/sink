@@ -190,9 +190,9 @@ const main = async ([platform], opts) => {
           });
 
           const res = await client.send(remove);
+          const status = res.$metadata.httpStatusCode;
+          const log = status === 200 ? success : console.log;
           filesToDelete.forEach((f) => {
-            const status = res.$metadata.httpStatusCode;
-            const log = status === 200 ? success : console.log;
             log(`status ${status} - deleted ${f}`);
           });
         }
