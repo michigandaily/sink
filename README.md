@@ -114,14 +114,14 @@ For security purposes, the service account and associated client email should be
 
 ## AWS S3 deployment with cache invalidation
 
-Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `distribution`, `region`, `bucket`, `key`, `build`, and `profile`.
+Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `region`, `bucket`, `key`, `build`, and `profile`. The value can optionally include a `distribution` property.
 
-- The `distribution` property specifies the S3 bucket's associated CloudFront distribution. This will be used to invalidate files if needed. If you do not want to invalidate the bucket's distribution, either set `distribution` as an empty string or don't include the property altogether.
 - The `region` property specifies where the S3 bucket is located.
 - The `bucket` property will be used to determine which S3 bucket to deploy to.
 - The `key` property will be used to determine which sub-directory in the `bucket` to deploy to.
 - The `build` property will be used to determine which directory's content will be deployed to S3.
 - The `profile` property will be used as the name of the AWS credentials profile specified in `~/.aws/credentials`.
+- The `distribution` property specifies the S3 bucket's associated CloudFront distribution. This will be used to invalidate files if needed. If `distribution` is not specified, `sink` will attempt to find a CloudFront distribution associated with the `bucket`. If you do not want to invalidate the bucket's distribution, either set `distribution` as an empty string, `null`, or `false`.
 
 > To Daily staffers: ask a managing online editor for access to AWS credentials. They will retrieve it for you from 1Password via a private link. You will receive a CSV file that contains "Access key ID" and "Secret access key" columns. If you do not already have a file located at `~/.aws/credentials`, create that file. Then populate it with the following:
 
@@ -138,12 +138,14 @@ Now, you can deploy to S3 by running `yarn sink deploy aws`.
 ### IAM User permissions
 
 1. Create a new IAM policy with the following services:
-   - **Service**: CloudFront, **Actions**: CreateInvalidation (under the Write access level), **Resources**: Specific, any in this account
+   - **Service**: CloudFront, **Actions**: CreateInvalidation (under the Write access level), ListDistributions (under the List access level) **Resources**: Specific, any in this account and all
    - **Service**: S3, **Actions**: ListBucket (under the List access level), PutObject (under the Write access level), DeleteObject (under the Write access level), **Resources**: Specific, any bucket and any object.
 2. Name the policy `sink-deploy`.
 3. Create a new IAM user with programmatic access.
 4. Attach the existing `sink-deploy` policy directly.
 5. Download the credentials CSV file.
+
+An example AWS IAM Policy configuration file (i.e. `example.aws-iam-policy.json`) is provided for reference.
 
 ## GitHub Pages deployment
 

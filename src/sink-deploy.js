@@ -1,12 +1,6 @@
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import {
-  readdirSync,
-  lstatSync,
-  createReadStream,
-  existsSync,
-  rmSync,
-} from "node:fs";
+import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join, extname, dirname, normalize, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
@@ -22,6 +16,7 @@ import {
 import {
   CloudFrontClient,
   CreateInvalidationCommand,
+  ListDistributionsCommand,
 } from "@aws-sdk/client-cloudfront";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
@@ -87,7 +82,7 @@ const main = async ([platform], opts) => {
               res();
             } else {
               rej();
-              fatal_error("Deployment cancelled.");
+              fatal_error("Deployment cancelled");
             }
           }
         );
@@ -97,7 +92,7 @@ const main = async ([platform], opts) => {
     if (shouldBuild) {
       execSync("yarn build", { stdio: "inherit" });
     } else {
-      console.log("Skipping build step.");
+      console.log("skipping build step");
     }
 
     const credentials = fromIni({ profile });
@@ -208,11 +203,48 @@ const main = async ([platform], opts) => {
         }
 
         if (filesToInvalidate.size > 0) {
-          const { distribution } = config.deployment;
+          let { distribution } = config.deployment;
 
-          if (distribution === undefined || !distribution) {
-            console.log("CloudFront distribution was not specified.");
+          if (
+            distribution === false ||
+            distribution === "" ||
+            distribution === null
+          ) {
+            console.log("skipping CloudFront invalidation");
             return;
+          }
+
+          const cloudfront = new CloudFrontClient({ region, credentials });
+
+          if (distribution === undefined) {
+            let res = await cloudfront.send(new ListDistributionsCommand({}));
+            distribution = res.DistributionList.Items.find(
+              ({ Aliases: { Quantity, Items } }) =>
+                Quantity > 0 && Items.includes(bucket)
+            )?.Id;
+
+            while (
+              distribution === undefined &&
+              res.DistributionList.IsTruncated
+            ) {
+              res = await cloudfront.send(
+                new ListDistributionsCommand({
+                  Marker: res.DistributionList.NextMarker,
+                })
+              );
+              distribution = res.DistributionList.Items.find(
+                ({ Aliases: { Quantity, Items } }) =>
+                  Quantity > 0 && Items.includes(bucket)
+              )?.Id;
+            }
+
+            if (distribution === undefined) {
+              console.log("could not find distribution for", bucket);
+              console.log("skipping CloudFront invalidation");
+              return;
+            } else {
+              console.log("found distribution", distribution, "for", bucket);
+            }
           }
 
           const wildcards = Array.from(filesToInvalidate).filter((d) =>
@@ -225,7 +257,6 @@ const main = async ([platform], opts) => {
             filesToInvalidate.add("/*");
           }
 
-          const cloudfront = new CloudFrontClient({ region, credentials });
           const invalidate = new CreateInvalidationCommand({
             DistributionId: distribution,
             InvalidationBatch: {
@@ -246,7 +277,7 @@ const main = async ([platform], opts) => {
       }
     } else {
       if (key.length > 0) {
-        console.log(`Creating new directory ${key} in ${bucket}.`);
+        console.log(`Creating new directory ${key} in ${bucket}`);
       }
       await uploadFiles(directory);
     }
