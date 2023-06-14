@@ -60,6 +60,21 @@ const createInvalidationPath = (fp) => {
 
 const depth = (directory) => directory.split("/").length - 1;
 
+const getCommonStartingSubsequence = (strings) => {
+  let sorted = strings.sort();
+  let first = sorted.at(0);
+  let last = sorted.at(-1);
+
+  let length = first.length;
+  let index = 0;
+
+  while (index < length && first[index] === last[index]) {
+    index++;
+  }
+
+  return first.substring(0, index);
+};
+
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
 
@@ -253,8 +268,11 @@ const main = async ([platform], opts) => {
 
           // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html#InvalidationLimits
           if (wildcards.length > 15) {
+            const commonStartingPath = getCommonStartingSubsequence(
+              Array.from(filesToInvalidate)
+            );
             filesToInvalidate.clear();
-            filesToInvalidate.add("/*");
+            filesToInvalidate.add(`${commonStartingPath}*`);
           }
 
           const invalidate = new CreateInvalidationCommand({
