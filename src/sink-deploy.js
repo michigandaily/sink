@@ -4,6 +4,7 @@ import { readdirSync, lstatSync, createReadStream } from "node:fs";
 import { join, extname, dirname, normalize, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
+import { exit } from "node:process";
 
 import { program, Argument } from "commander";
 import chalk from "chalk";
@@ -18,7 +19,7 @@ import {
   CreateInvalidationCommand,
   ListDistributionsCommand,
 } from "@aws-sdk/client-cloudfront";
-import { fromIni } from "@aws-sdk/credential-providers";
+import { fromIni, fromEnv } from "@aws-sdk/credential-providers";
 import { lookup } from "mime-types";
 
 import { load_config, success, fatal_error } from "./_utils.js";
@@ -110,7 +111,29 @@ const main = async ([platform], opts) => {
       console.log("skipping build step");
     }
 
-    const credentials = fromIni({ profile });
+    let credentials;
+
+    if (!!profile) {
+      credentials = fromIni({ profile });
+    } else {
+      console.log(
+        "no AWS credentials profile was specified. falling back to environment variables."
+      );
+      await import("dotenv/config");
+
+      if (
+        !!process.env.AWS_ACCESS_KEY_ID &&
+        !!process.env.AWS_SECRET_ACCESS_KEY
+      ) {
+        credentials = fromEnv();
+      } else {
+        console.error(
+          "no AWS credentials were specified in the environment variables. exiting."
+        );
+        exit(1);
+      }
+    }
+
     const client = new S3Client({ region, credentials });
     const list = new ListObjectsCommand({ Bucket: bucket, Prefix: key });
     const response = await client.send(list);
@@ -338,7 +361,7 @@ const main = async ([platform], opts) => {
 
 if (process.argv[1] === self) {
   program
-    .version("2.8.0")
+    .version("2.9.0")
     .addArgument(
       new Argument("<platform>", "platform to deploy to").choices([
         "aws",

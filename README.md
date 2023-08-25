@@ -8,7 +8,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 Run `yarn add --dev michigandaily/sink` to get the latest version.
 
-If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.8.0`).
+If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.9.0`).
 
 ## Google Drive fetch
 
@@ -114,13 +114,13 @@ For security purposes, the service account and associated client email should be
 
 ## AWS S3 deployment with cache invalidation
 
-Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `region`, `bucket`, `key`, `build`, and `profile`. The value can optionally include a `distribution` property.
+Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `region`, `bucket`, `key`, `build`. The value can optionally include `distribution` and `profile` properties.
 
 - The `region` property specifies where the S3 bucket is located.
 - The `bucket` property will be used to determine which S3 bucket to deploy to.
 - The `key` property will be used to determine which sub-directory in the `bucket` to deploy to.
 - The `build` property will be used to determine which directory's content will be deployed to S3.
-- The `profile` property will be used as the name of the AWS credentials profile specified in `~/.aws/credentials`.
+- The `profile` property will be used as the name of the AWS credentials profile specified in `~/.aws/credentials`. If a `profile` property is not specified, `sink` will attempt to read credentials from the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
 - The `distribution` property specifies the S3 bucket's associated CloudFront distribution. This will be used to invalidate files if needed. If `distribution` is not specified, `sink` will attempt to find a CloudFront distribution associated with the `bucket`. If you do not want to invalidate the bucket's distribution, either set `distribution` as an empty string, `null`, or `false`.
 
 > To Daily staffers: ask a managing online editor for access to AWS credentials. They will retrieve it for you from 1Password via a private link. You will receive a CSV file that contains "Access key ID" and "Secret access key" columns. If you do not already have a file located at `~/.aws/credentials`, create that file. Then populate it with the following:
