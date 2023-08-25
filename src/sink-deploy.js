@@ -83,7 +83,7 @@ const main = async ([platform], opts) => {
 
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
-    if (key.length <= 1) {
+    if (key.length < 1) {
       const prompt = createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -91,7 +91,7 @@ const main = async ([platform], opts) => {
 
       await new Promise((res, rej) => {
         prompt.question(
-          "Are you sure you want to deploy to the bucket root? [Y/n]",
+          "Are you sure you want to deploy to the bucket root? [Y/n] ",
           (confirm) => {
             prompt.close();
             if (confirm === "Y") {
@@ -361,7 +361,7 @@ const main = async ([platform], opts) => {
 
 if (process.argv[1] === self) {
   program
-    .version("2.9.0")
+    .version("2.9.1")
     .addArgument(
       new Argument("<platform>", "platform to deploy to").choices([
         "aws",
