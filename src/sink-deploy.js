@@ -84,6 +84,21 @@ const main = async ([platform], opts) => {
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
 
+    if (region === null || region === undefined) {
+      console.error("no AWS region was specified. exiting.");
+      exit(1);
+    }
+
+    if (bucket === null || bucket === undefined) {
+      console.error("no AWS bucket was specified. exiting.");
+      exit(1);
+    }
+
+    if (build === null || build === undefined) {
+      console.error("no build directory was specified. exiting.");
+      exit(1);
+    }
+
     let credentials;
 
     if (!!profile) {
@@ -107,7 +122,7 @@ const main = async ([platform], opts) => {
       }
     }
 
-    if (key.length < 1) {
+    if (key === undefined || key === null || key.length < 1) {
       const prompt = createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -325,6 +340,11 @@ const main = async ([platform], opts) => {
     }
   } else if (platform === "github") {
     const { build, branch, url } = config.deployment;
+
+    if (build === null || build === undefined) {
+      console.error("no build directory was specified. exiting.");
+      exit(1);
+    }
 
     const deploy = join(dirname(self), "scripts", "deploy.sh");
     execSync(
