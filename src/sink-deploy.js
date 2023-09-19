@@ -83,6 +83,7 @@ const main = async ([platform], opts) => {
 
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
+
     if (region === null || region === undefined) {
       console.error("no AWS region was specified. exiting.");
       exit(1);
@@ -96,6 +97,29 @@ const main = async ([platform], opts) => {
     if (build === null || build === undefined) {
       console.error("no build directory was specified. exiting.");
       exit(1);
+    }
+
+    let credentials;
+
+    if (!!profile) {
+      credentials = fromIni({ profile });
+    } else {
+      console.log(
+        "no AWS credentials profile was specified. falling back to environment variables."
+      );
+      await import("dotenv/config");
+
+      if (
+        !!process.env.AWS_ACCESS_KEY_ID &&
+        !!process.env.AWS_SECRET_ACCESS_KEY
+      ) {
+        credentials = fromEnv();
+      } else {
+        console.error(
+          "no AWS credentials were specified in the environment variables. exiting."
+        );
+        exit(1);
+      }
     }
 
     if (key === undefined || key === null || key.length < 1) {
@@ -124,29 +148,6 @@ const main = async ([platform], opts) => {
       execSync("yarn build", { stdio: "inherit" });
     } else {
       console.log("skipping build step");
-    }
-
-    let credentials;
-
-    if (!!profile) {
-      credentials = fromIni({ profile });
-    } else {
-      console.log(
-        "no AWS credentials profile was specified. falling back to environment variables."
-      );
-      await import("dotenv/config");
-
-      if (
-        !!process.env.AWS_ACCESS_KEY_ID &&
-        !!process.env.AWS_SECRET_ACCESS_KEY
-      ) {
-        credentials = fromEnv();
-      } else {
-        console.error(
-          "no AWS credentials were specified in the environment variables. exiting."
-        );
-        exit(1);
-      }
     }
 
     const client = new S3Client({ region, credentials });
