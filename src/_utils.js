@@ -57,7 +57,7 @@ export const success = (message) => {
 
 export const get_auth = (path, scopes) => {
   if (path === undefined || typeof path !== "string") {
-    console.log('Missig "auth" property when trying to find account credentials. Falling back to "GOOGLE_DRIVE_AUTH" environment credentials.');
+    console.log('Missing "auth" property when trying to find account credentials. Falling back to "GOOGLE_DRIVE_AUTH" environment credentials.');
 
     const auth_contents = process.env.GOOGLE_DRIVE_AUTH;
     if (auth_contents === undefined) {
