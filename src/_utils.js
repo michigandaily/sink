@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 import chalk from "chalk";
 import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
+import "dotenv/config"
 
 const _is_js_config = (filename) => {
   return filename.slice(-2) === "js";
@@ -56,10 +57,14 @@ export const success = (message) => {
 
 export const get_auth = (path, scopes) => {
   if (path === undefined || typeof path !== "string") {
-    fatal_error(`
-    Missing "auth" property when trying to find account credentials.
-    Configure the "auth" properties in your configuration file.
-    `);
+    console.log('Missing "auth" property when trying to find account credentials. Falling back to "GOOGLE_DRIVE_AUTH" environment credentials.');
+
+    const auth_contents = process.env.GOOGLE_DRIVE_AUTH;
+    if (auth_contents === undefined) {
+      fatal_error(`Could not find "GOOGLE_DRIVE_AUTH" environment variable.`);
+    }
+
+    return new GoogleAuth({ credentials: JSON.parse(auth_contents), scopes });
   }
 
   const file = path.startsWith("~") ? path.replace("~", homedir()) : path;
