@@ -676,6 +676,13 @@
   dependencies:
     googleapis-common "^6.0.3"
 
+"@googleapis/iam@^7.1.0":
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/@googleapis/iam/-/iam-7.1.0.tgz#022fb2b5cfd44fc58b36eb19805961ce4a98bef4"
+  integrity sha512-eau3JwYbKYfRH1S3LnMBfAM8OrSP3xNocZkLnQBV5ion4N/njK6ZAYYwHpFPhdFAGZoEnJmkuB5gggObPk9oLA==
+  dependencies:
+    googleapis-common "^6.0.3"
+
 "@googleapis/sheets@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@googleapis/sheets/-/sheets-4.0.2.tgz#8b6218cab8a6a242a45df1d5581e38c46adfdaf2"

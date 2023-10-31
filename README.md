@@ -114,6 +114,16 @@ In order to create a service account key file (i.e., `.sink-google-auth-service-
 
 For security purposes, the service account and associated client email should be regenerated periodically.
 
+#### Programmatic service account creation
+
+It may be useful to programmatically create service accounts. For example, you may want to share different Google Drive files with different service account emails.
+
+1. Create a project and add a service account to it. Make note of the service account email address.
+2. Enable the Identity and Access Management (IAM) API for the project.
+3. Under the project IAM tab, grant access for the "Service Account Admin" and "Service Account Key Admin" roles to the service account email address as principal.
+4. Add a new key to the service account and download the JSON credentials file.
+5. Run `yarn sink auth --credentials <path-to-service-account-credentials> --account-id <service-account-id>`. This will output a new credentials file at `./sink-google-auth-service-account-<service-account-id>.json`.
+
 ## AWS S3 deployment with cache invalidation
 
 Create a configuration file. The file should have a `deployment` property with an object value. The value should include the following properties: `region`, `bucket`, `key`, `build`. The value can optionally include `distribution` and `profile` properties.
