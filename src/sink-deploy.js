@@ -132,7 +132,7 @@ const main = async ([platform], opts) => {
       }
     }
 
-    if (key === undefined || key === null || key.length < 1) {
+    if (key === undefined || key === null || key.length === 0) {
       const prompt = createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -152,6 +152,11 @@ const main = async ([platform], opts) => {
           }
         );
       });
+    }
+
+    if (key?.startsWith("/") || key?.endsWith("/")) {
+      console.error("the `key` should not begin or end with '/'. exiting.");
+      exit(1);
     }
 
     if (shouldBuild) {
