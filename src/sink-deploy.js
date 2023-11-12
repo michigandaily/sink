@@ -1,6 +1,6 @@
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { readdirSync, lstatSync, createReadStream } from "node:fs";
+import { readdirSync, lstatSync, createReadStream, existsSync } from "node:fs";
 import { join, extname, dirname, normalize, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
@@ -145,7 +145,13 @@ const main = async ([platform], opts) => {
     }
 
     if (shouldBuild) {
-      execSync("yarn build", { stdio: "inherit" });
+      let packageManager = "npm";
+      if (existsSync("yarn.lock")) {
+        packageManager = "yarn";
+      } else if (existsSync("pnpm-lock.yaml") || existsSync("pnpm-lock.yml")) {
+        packageManager = "pnpm";
+      }
+      execSync(`${packageManager} run build`, { stdio: "inherit" });
     } else {
       console.log("skipping build step");
     }
