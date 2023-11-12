@@ -76,6 +76,16 @@ const getCommonStartingSubsequence = (strings) => {
   return first.substring(0, index);
 };
 
+const getPackageManager = () => {
+  if (existsSync("yarn.lock")) {
+    return "yarn";
+  } else if (existsSync("pnpm-lock.yaml") || existsSync("pnpm-lock.yml")) {
+    return "pnpm";
+  } else {
+    return "npm";
+  }
+}
+
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
 
@@ -145,12 +155,7 @@ const main = async ([platform], opts) => {
     }
 
     if (shouldBuild) {
-      let packageManager = "npm";
-      if (existsSync("yarn.lock")) {
-        packageManager = "yarn";
-      } else if (existsSync("pnpm-lock.yaml") || existsSync("pnpm-lock.yml")) {
-        packageManager = "pnpm";
-      }
+      const packageManager = getPackageManager();
       execSync(`${packageManager} run build`, { stdio: "inherit" });
     } else {
       console.log("skipping build step");
@@ -353,8 +358,9 @@ const main = async ([platform], opts) => {
     }
 
     const deploy = join(dirname(self), "scripts", "deploy.sh");
+    const packageManager = getPackageManager();
     execSync(
-      `sh ${deploy} ${normalize(build)} ${shouldBuild} ${branch ?? "gh-pages"}`,
+      `sh ${deploy} ${normalize(build)} ${shouldBuild} ${branch ?? "gh-pages"} ${packageManager}`,
       {
         stdio: "inherit",
       }

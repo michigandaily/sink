@@ -2,11 +2,12 @@ WORKTREE_PATH=.sink-github-deploy-worktree
 BUILD_PATH=$1
 SHOULD_BUILD=$2
 DEPLOYMENT_BRANCH=$3
+PACKAGE_MANAGER=$4
 
 # build artifacts
 if [[ $SHOULD_BUILD = "true" ]] 
 then
-  yarn build
+  $PACKAGE_MANAGER run build
 else
   echo "Skipping build step."
 fi
