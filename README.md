@@ -6,7 +6,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 ## Installation
 
-Run `yarn add --dev michigandaily/sink` to get the latest version.
+Run `pnpm install -D michigandaily/sink` to get the latest version. You can also use `yarn` or `npm`.
 
 If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.10.0`).
 
@@ -59,7 +59,7 @@ In the case where it's not possible to store the credentials at a file path, use
 2. Consider this generalized Google Doc URL: <https://docs.google.com/document/d/FILE_ID/edit>.
 3. Set the value of `id` to `<FILE_ID>`.
 
-To fetch all Google Documents that are specified in `fetch`, run `yarn sink gdoc`.
+To fetch all Google Documents that are specified in `fetch`, run `pnpm sink gdoc`.
 
 ### Fetching a Google Sheet as a CSV file, TSV file or JSON file
 
@@ -71,7 +71,7 @@ To fetch all Google Documents that are specified in `fetch`, run `yarn sink gdoc
 
 If you wish to fetch all sheets in the spreadsheet, you may forgo specifying a `sheetId`. The `output` property should specify a directory, not a file name. By default, fetching all sheets at once will output CSV files. Specify an `extension` property to fetch other file formats (e.g. `.json`, `.csv` or `.tsv`).
 
-To fetch all Google Sheets that are specified in `fetch`, run `yarn sink gsheet`.
+To fetch all Google Sheets that are specified in `fetch`, run `pnpm sink gsheet`.
 
 ### Fetching a JSON file
 
@@ -79,21 +79,21 @@ To fetch all Google Sheets that are specified in `fetch`, run `yarn sink gsheet`
 2. Consider this generalized Google Drive JSON URL: <https://drive.google.com/file/d/FILE_ID/>. You'll need to click "Get link" in the context menu and then click "Copy link" in the popup in order to get a JSON file's URL.
 3. Set the value of `id` to `<FILE_ID>`.
 
-To fetch all JSON files that are specified in `fetch`, run `yarn sink json`.
+To fetch all JSON files that are specified in `fetch`, run `pnpm sink json`.
 
 ### Fetching a text file
 
-Text files can include HTML, CSS, Markdown, CSV files, etc. If you want to fetch a JSON file, use `yarn sink json` instead.
+Text files can include HTML, CSS, Markdown, CSV files, etc. If you want to fetch a JSON file, use `pnpm sink json` instead.
 
 1. Set the value of `type` to `text`.
 2. Consider this generalized Google Drive URL: <https://drive.google.com/file/d/FILE_ID/>. You'll need to click "Get link" in the context menu and then click "Copy link" in the popup in order to get a text file's URL.
 3. Set the value of `id` to `<FILE_ID>`.
 
-To fetch all text files that are specified in `fetch`, run `yarn sink text`.
+To fetch all text files that are specified in `fetch`, run `pnpm sink text`.
 
 ### Fetching everything
 
-To fetch all files that are specified in `fetch`, run `yarn sink fetch`.
+To fetch all files that are specified in `fetch`, run `pnpm sink fetch`.
 
 ### Creating a service account
 
@@ -135,7 +135,7 @@ aws_secret_access_key=<Insert value from "Secret access key" column here>
 
 Your `package.json` file will need a `build` script in the `scripts` property. Internally, `sink` will run the `build` script. You can skip the build process by adding a `--skip-build` or `-s` flag.
 
-Now, you can deploy to S3 by running `yarn sink deploy aws`.
+Now, you can deploy to S3 by running `pnpm sink deploy aws`.
 
 ### IAM User permissions
 
@@ -159,7 +159,7 @@ Create a configuration file. The file should have a `deployment` property with a
 
 Your `package.json` file will need a `build` script in the `scripts` property. Internally, `sink` will run the `build` script. You can skip the build process by adding a `--skip-build` or `-s` flag.
 
-Now you can deploy to GitHub Pages by running `yarn sink deploy github`.
+Now you can deploy to GitHub Pages by running `pnpm sink deploy github`.
 
 ## Troubleshooting
 
