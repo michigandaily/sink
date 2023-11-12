@@ -27,7 +27,6 @@ export default {
     },
   ],
   deployment: {
-    url: "",
     distribution: "",
     region: "us-east-2",
     bucket: "",
