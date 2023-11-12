@@ -4,7 +4,7 @@ import { dirname } from "node:path";
 import { pathToFileURL } from "node:url";
 
 import chalk from "chalk";
-import { GoogleAuth } from "google-auth-library";
+import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import { findUp } from "find-up";
 import "dotenv/config"
 
@@ -70,10 +70,36 @@ export const get_auth = (path, scopes) => {
   const file = path.startsWith("~") ? path.replace("~", homedir()) : path;
   if (!existsSync(file)) {
     fatal_error(`
-    Could not open service account credentials at ${file}.
-    Reconfigure the "auth" properties in your configuration file or download the credentials file.
+    Could not open account credentials at ${file}.
+    Reconfigure the "auth" properties in your configuration file or create a credentials file.
     `);
   }
 
-  return new GoogleAuth({ keyFile: file, scopes });
+  const auth = JSON.parse(readFileSync(file).toString());
+
+  if (auth.type === "service_account") {
+    return new GoogleAuth({ keyFile: file, scopes });
+  } else if (auth.type === "oauth") {
+    if (!existsSync(auth.clientPath)) {
+      fatal_error(`Could not open OAuth client file at ${auth.clientPath}.`)
+    } else {
+      const { web: { client_id, client_secret, redirect_uris }} = JSON.parse(readFileSync(auth.clientPath).toString());
+
+      const client = new OAuth2Client(
+        client_id,
+        client_secret,
+        redirect_uris[0]
+      );
+
+      const token = structuredClone(auth);
+      delete token.type;
+      delete token.clientPath;
+
+      client.setCredentials(token);
+
+      return client;
+    }
+  } else {
+    fatal_error(`Could not parse authentication file type ${auth.type} at ${file}`);
+  }
 };
