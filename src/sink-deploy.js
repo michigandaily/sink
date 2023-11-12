@@ -84,12 +84,13 @@ const getPackageManager = () => {
   } else {
     return "npm";
   }
-}
+};
 
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
 
   const shouldBuild = opts.skipBuild === undefined;
+  const manualPrompt = opts.yes === undefined;
 
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
@@ -132,7 +133,10 @@ const main = async ([platform], opts) => {
       }
     }
 
-    if (key === undefined || key === null || key.length === 0) {
+    if (
+      manualPrompt &&
+      (key === undefined || key === null || key.length === 0)
+    ) {
       const prompt = createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -365,7 +369,9 @@ const main = async ([platform], opts) => {
     const deploy = join(dirname(self), "scripts", "deploy.sh");
     const packageManager = getPackageManager();
     execSync(
-      `sh ${deploy} ${normalize(build)} ${shouldBuild} ${branch ?? "gh-pages"} ${packageManager}`,
+      `sh ${deploy} ${normalize(build)} ${shouldBuild} ${
+        branch ?? "gh-pages"
+      } ${packageManager}`,
       {
         stdio: "inherit",
       }
@@ -408,6 +414,7 @@ if (process.argv[1] === self) {
     )
     .option("-s, --skip-build", "skip build step")
     .option("-c, --config <path>", "path to config file")
+    .option("-y, --yes", "answer yes to prompts")
     .parse();
 
   main(program.args, program.opts());
