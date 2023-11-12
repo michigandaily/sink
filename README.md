@@ -133,7 +133,7 @@ aws_access_key_id=<Insert value from "Access key ID" column here>
 aws_secret_access_key=<Insert value from "Secret access key" column here>
 ```
 
-You'll also need a `build` script as part of `package.json`'s `scripts` property. Internally, `sink` will run `yarn build`. You can skip the build process by adding a `--skip-build` or `-s` flag.
+Your `package.json` file will need a `build` script in the `scripts` property. Internally, `sink` will run the `build` script. You can skip the build process by adding a `--skip-build` or `-s` flag.
 
 Now, you can deploy to S3 by running `yarn sink deploy aws`.
 
@@ -157,7 +157,7 @@ Create a configuration file. The file should have a `deployment` property with a
 - The `branch` property specifies the branch to deploy to. If not specified, `gh-pages` is the default deployment branch.
 - The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
 
-You'll also need a `build` script as part of `package.json`'s `scripts` property. Internally, `sink` will run `yarn build`. You can skip the build process by adding a `--skip-build` or `-s` flag.
+Your `package.json` file will need a `build` script in the `scripts` property. Internally, `sink` will run the `build` script. You can skip the build process by adding a `--skip-build` or `-s` flag.
 
 Now you can deploy to GitHub Pages by running `yarn sink deploy github`.
 
