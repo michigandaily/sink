@@ -9,6 +9,7 @@ import {
   get_auth,
   write_file,
   has_filled_props,
+  fatal_error
 } from "./_utils.js";
 
 export const fetchText = async ({ id, output, auth }) => {
