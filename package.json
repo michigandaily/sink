@@ -6,6 +6,7 @@
   "bin": {
     "sink": "src/sink.js"
   },
+  "exports": "./src/config.js",
   "repository": "https://github.com/MichiganDaily/sink",
   "author": {
     "name": "Naitian Zhou"
