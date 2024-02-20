@@ -6,34 +6,34 @@ import { pathToFileURL } from "node:url";
 import chalk from "chalk";
 import { GoogleAuth } from "google-auth-library";
 import { findUp } from "find-up";
-import "dotenv/config"
+import "dotenv/config";
 
 const _is_js_config = (filename) => {
   return filename.slice(-2) === "js";
-}
+};
 
 export const read_json_config = (path) => {
   return { config: JSON.parse(readFileSync(path)) };
-}
+};
 
 export const read_js_config = async (path) => {
-  const config = (await import(pathToFileURL(path))).default
-  return { config }
-}
+  const config = (await import(pathToFileURL(path))).default;
+  return { config };
+};
 
 export const has_filled_props = (o) => Object.values(o).every((v) => v.length);
 
 // Search directory for configuration file
 export const load_config = async (configFile = null) => {
   const defaults = ["sink.config.js", "sink.config.mjs", "sink.config.cjs", "sink.config.json"];
-  const searchFiles = configFile ? [configFile, ...defaults] : defaults
+  const searchFiles = configFile ? [configFile, ...defaults] : defaults;
   for (const searchFile of searchFiles) {
     const path = await findUp(searchFile);
     if (typeof path === "undefined") continue;
     if (_is_js_config(path)) {
-      return await read_js_config(path)
+      return await read_js_config(path);
     }
-    return read_json_config(path)
+    return read_json_config(path);
   }
   fatal_error("Could not load config file");
 };
@@ -57,7 +57,9 @@ export const success = (message) => {
 
 export const get_auth = (path, scopes) => {
   if (path === undefined || typeof path !== "string") {
-    console.log('Missing "auth" property when trying to find account credentials. Falling back to "GOOGLE_DRIVE_AUTH" environment credentials.');
+    console.log(
+      `Missing "auth" property when trying to find account credentials. Falling back to "GOOGLE_DRIVE_AUTH" environment credentials.`
+    );
 
     const auth_contents = process.env.GOOGLE_DRIVE_AUTH;
     if (auth_contents === undefined) {
