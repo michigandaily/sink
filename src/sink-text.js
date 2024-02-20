@@ -9,7 +9,7 @@ import {
   get_auth,
   write_file,
   has_filled_props,
-  fatal_error
+  fatal_error,
 } from "./_utils.js";
 
 export const fetchText = async ({ id, output, auth }) => {
@@ -20,7 +20,7 @@ export const fetchText = async ({ id, output, auth }) => {
 
   let data;
   try {
-    ({ data } = await gdrive.files.get({ fileId: id, alt: "media" }))
+    ({ data } = await gdrive.files.get({ fileId: id, alt: "media" }));
   } catch (e) {
     fatal_error(`
     Error when fetching file with fileId ${id}. Check the file identifer or your file access permissions.
