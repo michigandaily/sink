@@ -25,13 +25,7 @@ export const has_filled_props = (o) => Object.values(o).every((v) => v.length);
 
 // Search directory for configuration file
 export const load_config = async (configFile = null) => {
-  const defaults = [
-    "sink.config.js",
-    "sink.config.mjs",
-    "sink.config.cjs",
-    "sink.config.json",
-    "config.json",
-  ];
+  const defaults = ["sink.config.js", "sink.config.mjs", "sink.config.cjs", "sink.config.json"];
   const searchFiles = configFile ? [configFile, ...defaults] : defaults;
   for (const searchFile of searchFiles) {
     const path = await findUp(searchFile);
