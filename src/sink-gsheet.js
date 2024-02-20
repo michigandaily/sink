@@ -51,7 +51,7 @@ export const fetchSheets = async ({ id, sheetId, output, auth, extension }) => {
     fatal_error(`
     Error when fetching sheet with spreadsheetId ${id}${sheetId === undefined ? "" : ` and sheetId ${sheetId}`}. Check the file identifer or your file access permissions.
     ${e.stack}
-    `)
+    `);
   }
 
   const ranges = sheetQ.data.sheets.map(sheet => `'${sheet.properties.title}'`);

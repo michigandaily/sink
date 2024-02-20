@@ -112,7 +112,7 @@ const main = async ([platform], opts) => {
 
     let credentials;
 
-    if (!!profile) {
+    if (profile) {
       credentials = fromIni({ profile });
     } else {
       console.log(
