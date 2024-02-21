@@ -153,15 +153,7 @@ An example AWS IAM Policy configuration file (i.e. `example.aws-iam-policy.json`
 
 ## GitHub Pages deployment
 
-Create a configuration file. The file should have a `deployment` property with an object value. The value should include a `build` property. The value can also optionally include `branch` and `url` properties.
-
-- The `build` property will be used to determine which directory's content will be deployed to GitHub Pages.
-- The `branch` property specifies the branch to deploy to. If not specified, `gh-pages` is the default deployment branch.
-- The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
-
-Your `package.json` file will need a `build` script in the `scripts` property. Internally, `sink` will run the `build` script. You can skip the build process by adding a `--skip-build` or `-s` flag.
-
-Now you can deploy to GitHub Pages by running `pnpm sink deploy github`.
+`sink` v3 no longer supports deploying to GitHub Pages. Use a GitHub Actions workflow instead. If you need to run fetching commands, run them in the workflow using GitHub Secrets to store authentication environment variables.
 
 ## Troubleshooting
 
