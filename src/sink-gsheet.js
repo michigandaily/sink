@@ -94,7 +94,12 @@ async function main(opts) {
   const { config } = await load_config(opts.config);
   config.fetch
     ?.filter((d) => d.type === "sheet" && has_filled_props(d))
-    .forEach(fetchSheets);
+    .forEach((file) => {
+      fetchSheets({
+        ...file,
+        auth: Object.hasOwn(file, "auth") ? file.auth : config.fetch_auth,
+      });
+    });
 }
 
 const self = fileURLToPath(import.meta.url);

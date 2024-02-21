@@ -136,7 +136,12 @@ const main = async (opts) => {
   const { config } = await load_config(opts.config);
   config.fetch
     ?.filter((d) => d.type === "doc" && has_filled_props(d))
-    .forEach(fetchDoc);
+    .forEach((file) => {
+      fetchDoc({
+        ...file,
+        auth: Object.hasOwn(file, "auth") ? file.auth : config.fetch_auth,
+      });
+    });
 };
 
 const self = fileURLToPath(import.meta.url);

@@ -1,6 +1,7 @@
 import { defineConfig } from "sink";
 
 export default defineConfig({
+  fetch_auth: undefined,
   fetch: [
     {
       type: "doc",
