@@ -105,7 +105,7 @@ async function main(opts) {
 const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.11.1")
+    .version("3.0.0")
     .option("-c, --config <path>", "path to config file")
     .parse();
 

@@ -8,7 +8,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 Run `pnpm install -D michigandaily/sink` to get the latest version. You can also use `yarn` or `npm`.
 
-If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.11.1`).
+If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v3.0.0`).
 
 ## Google Drive fetch
 
