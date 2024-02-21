@@ -26,7 +26,10 @@ const main = async (opts) => {
           `Unsupported file type ${file.type} encountered when attempting to fetch ${file.id}`
         );
       }
-      func(file);
+      func({
+        ...file,
+        auth: Object.hasOwn(file, "auth") ? file.auth : config.fetch_auth
+      });
     });
 };
 

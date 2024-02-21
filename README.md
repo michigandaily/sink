@@ -12,7 +12,7 @@ If you want to install a specifc version, add a version tag at the end of the li
 
 ## Google Drive fetch
 
-Create a configuration file (e.g. `sink.config.js`). The JavaScript file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
+Create a configuration file (e.g. `sink.config.js`). The JavaScript file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, and `output` property. The `auth` property is optional.
 
 ```javascript
 // sink.config.js
@@ -53,7 +53,9 @@ In order to fetch files from Google Drive, we have to use an authentication file
 
 > To Daily staffers: ask a managing online editor for access to this authentication file. They will retrieve it for you from 1Password via a private link. The file will be called `.sink-google-auth-service-account.json`. It is recommended that you place this at the home directory of your computer (i.e. `~`) and specify the `auth` property as `~/.sink-google-auth-service-account.json`. Note the `client_email` property inside the authentication file. That email must have view access to files that you wish to fetch.
 
-In the case where it's not possible to store the credentials at a file path, use environment credentials instead. Set `GOOGLE_DRIVE_AUTH` to the contents of the authentication file. Omit setting the `auth` property to use environment credentials.
+The user can alternatively specify the `fetch_auth` property at the root of the configuration file as a fallback if the `auth` property is not specified.
+
+In the case where it's not possible to store the credentials at a file path, use environment credentials instead. Set `GOOGLE_DRIVE_AUTH` to the contents of the authentication file. Omit setting the `auth` and `fetch_auth` properties to use environment credentials.
 
 ### Fetching an ArchieML Google Document as a JSON file
 

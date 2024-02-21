@@ -1,5 +1,6 @@
 /**
  * @param {{
+ *  fetch_auth?: string,
  *  fetch: (
  *    {
  *      type: "doc" | "json" | "text",
