@@ -22,10 +22,6 @@
  *    build: string,
  *    profile?: string,
  *    distribution?: string | null | false
- *  } | {
- *    build: string,
- *    branch?: string,
- *    url?: string
  *  }
  * }} configuration
  */
