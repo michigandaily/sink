@@ -1,4 +1,6 @@
-export default {
+import { defineConfig } from "sink";
+
+export default defineConfig({
   fetch: [
     {
       type: "doc",
@@ -35,4 +37,4 @@ export default {
     build: "./dist",
     profile: "sink",
   },
-};
+});
