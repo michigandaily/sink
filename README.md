@@ -16,17 +16,19 @@ Create a configuration file (e.g. `sink.config.js`). The JavaScript file should 
 
 ```javascript
 // sink.config.js
-export default {
+import { defineConfig } from "sink";
+
+export default defineConfig({
   fetch: [
     { type: "", id: "", output: "", auth: "" },
     { type: "", id: "", output: "", auth: "" },
     { type: "", id: "", output: "", auth: "" },
     // ...
   ]
-}
+});
 ```
 
-You can also configure `sink` with a JSON file (e.g `sink.config.json`).
+You can also configure `sink` with a JSON file (e.g `sink.config.json`), though it is recommended to do so with a JavaScript file for typy hinting with the `defineConfig` function.
 
 ```json
 {
