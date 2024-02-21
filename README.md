@@ -28,7 +28,7 @@ export default defineConfig({
 });
 ```
 
-You can also configure `sink` with a JSON file (e.g `sink.config.json`), though it is recommended to do so with a JavaScript file for typy hinting with the `defineConfig` function.
+You can also configure `sink` with a JSON file (e.g `sink.config.json`), though it is recommended to do so with a JavaScript file for type hinting with the `defineConfig` function.
 
 ```json
 {
