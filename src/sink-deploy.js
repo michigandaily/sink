@@ -1,13 +1,12 @@
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { readdirSync, lstatSync, createReadStream, existsSync } from "node:fs";
-import { join, extname, dirname, normalize, posix } from "node:path";
+import { extname, dirname, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { createInterface } from "node:readline";
 import { exit } from "node:process";
 
 import { program, Argument } from "commander";
-import chalk from "chalk";
 import {
   S3Client,
   ListObjectsCommand,
@@ -84,12 +83,13 @@ const getPackageManager = () => {
   } else {
     return "npm";
   }
-}
+};
 
 const main = async ([platform], opts) => {
   const { config } = await load_config(opts.config);
 
   const shouldBuild = opts.skipBuild === undefined;
+  const manualPrompt = opts.yes === undefined;
 
   if (platform === "aws") {
     const { region, bucket, key, build, profile } = config.deployment;
@@ -111,7 +111,7 @@ const main = async ([platform], opts) => {
 
     let credentials;
 
-    if (!!profile) {
+    if (profile) {
       credentials = fromIni({ profile });
     } else {
       console.log(
@@ -132,7 +132,10 @@ const main = async ([platform], opts) => {
       }
     }
 
-    if (key === undefined || key === null || key.length === 0) {
+    if (
+      manualPrompt &&
+      (key === undefined || key === null || key.length === 0)
+    ) {
       const prompt = createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -354,60 +357,18 @@ const main = async ([platform], opts) => {
       }
       await uploadFiles(directory);
     }
-  } else if (platform === "github") {
-    const { build, branch, url } = config.deployment;
-
-    if (build === null || build === undefined) {
-      console.error("no build directory was specified. exiting.");
-      exit(1);
-    }
-
-    const deploy = join(dirname(self), "scripts", "deploy.sh");
-    const packageManager = getPackageManager();
-    execSync(
-      `sh ${deploy} ${normalize(build)} ${shouldBuild} ${branch ?? "gh-pages"} ${packageManager}`,
-      {
-        stdio: "inherit",
-      }
-    );
-
-    if (!url) {
-      return;
-    }
-
-    const repository = execSync("basename -s .git `git remote get-url origin`")
-      .toString()
-      .trim();
-    const regex = /^https?:\/\/([a-zA-Z0-9-_]*)\.github\.io/g;
-    const match = regex.exec(url);
-    if (match) {
-      const organization = match[1];
-
-      console.log(
-        "🔐 Remember to enforce HTTPS in the repository settings at",
-        chalk.yellow(
-          `https://github.com/${organization}/${repository}/settings/pages`
-        )
-      );
-      console.log(
-        "🍪 After enforcement, your graphic will be deployed at",
-        chalk.cyan(url)
-      );
-    }
   }
 };
 
 if (process.argv[1] === self) {
   program
-    .version("2.10.0")
+    .version("3.0.0")
     .addArgument(
-      new Argument("<platform>", "platform to deploy to").choices([
-        "aws",
-        "github",
-      ])
+      new Argument("<platform>", "platform to deploy to").choices(["aws"])
     )
     .option("-s, --skip-build", "skip build step")
     .option("-c, --config <path>", "path to config file")
+    .option("-y, --yes", "answer yes to prompts")
     .parse();
 
   main(program.args, program.opts());

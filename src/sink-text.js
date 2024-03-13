@@ -9,6 +9,7 @@ import {
   get_auth,
   write_file,
   has_filled_props,
+  fatal_error,
 } from "./_utils.js";
 
 export const fetchText = async ({ id, output, auth }) => {
@@ -19,7 +20,7 @@ export const fetchText = async ({ id, output, auth }) => {
 
   let data;
   try {
-    ({ data } = await gdrive.files.get({ fileId: id, alt: "media" }))
+    ({ data } = await gdrive.files.get({ fileId: id, alt: "media" }));
   } catch (e) {
     fatal_error(`
     Error when fetching file with fileId ${id}. Check the file identifer or your file access permissions.
@@ -35,13 +36,18 @@ const main = async (opts) => {
   const { config } = await load_config(opts.config);
   config.fetch
     ?.filter((d) => d.type === "text" && has_filled_props(d))
-    .forEach(fetchText);
+    .forEach((file) => {
+      fetchText({
+        ...file,
+        auth: Object.hasOwn(file, "auth") ? file.auth : config.fetch_auth,
+      });
+    });
 };
 
 const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.10.0")
+    .version("3.0.0")
     .option("-c, --config <path>", "path to config file")
     .parse();
 

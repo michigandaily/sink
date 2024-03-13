@@ -26,14 +26,17 @@ const main = async (opts) => {
           `Unsupported file type ${file.type} encountered when attempting to fetch ${file.id}`
         );
       }
-      func(file);
+      func({
+        ...file,
+        auth: Object.hasOwn(file, "auth") ? file.auth : config.fetch_auth
+      });
     });
 };
 
 const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.10.0")
+    .version("3.0.0")
     .option("-c, --config <path>", "path to config file")
     .parse();
 

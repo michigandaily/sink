@@ -8,25 +8,27 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 Run `pnpm install -D michigandaily/sink` to get the latest version. You can also use `yarn` or `npm`.
 
-If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v2.10.0`).
+If you want to install a specifc version, add a version tag at the end of the library name (e.g., `michigandaily/sink#v3.0.0`).
 
 ## Google Drive fetch
 
-Create a configuration file (e.g. `sink.config.js`). The JavaScript file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, `output`, and `auth` property.
+Create a configuration file (e.g. `sink.config.js`). The JavaScript file should have a `fetch` property with an array value. Each element in the array requires a `type`, `id`, and `output` property. The `auth` property is optional.
 
 ```javascript
 // sink.config.js
-export default {
+import { defineConfig } from "sink";
+
+export default defineConfig({
   fetch: [
     { type: "", id: "", output: "", auth: "" },
     { type: "", id: "", output: "", auth: "" },
     { type: "", id: "", output: "", auth: "" },
     // ...
   ]
-}
+});
 ```
 
-You can also configure `sink` with a JSON file (e.g `sink.config.json` or `config.json`).
+You can also configure `sink` with a JSON file (e.g `sink.config.json`), though it is recommended to do so with a JavaScript file for typy hinting with the `defineConfig` function.
 
 ```json
 {
@@ -39,7 +41,7 @@ You can also configure `sink` with a JSON file (e.g `sink.config.json` or `confi
 }
 ```
 
-By default, `sink` will read `sink.config.js`, `sink.config.mjs`, `sink.config.cjs`, `sink.config.json` or `config.json`. You can specify a different configuration file path using the `--config <path>` flag (or `-c <path>` as shorthand).
+By default, `sink` will read `sink.config.js`, `sink.config.mjs`, `sink.config.cjs` or `sink.config.json`. You can specify a different configuration file path using the `--config <path>` flag (or `-c <path>` as shorthand).
 
 ### Specifying the output file path
 
@@ -51,7 +53,9 @@ In order to fetch files from Google Drive, we have to use an authentication file
 
 > To Daily staffers: ask a managing online editor for access to this authentication file. They will retrieve it for you from 1Password via a private link. The file will be called `.sink-google-auth-service-account.json`. It is recommended that you place this at the home directory of your computer (i.e. `~`) and specify the `auth` property as `~/.sink-google-auth-service-account.json`. Note the `client_email` property inside the authentication file. That email must have view access to files that you wish to fetch.
 
-In the case where it's not possible to store the credentials at a file path, use environment credentials instead. Set `GOOGLE_DRIVE_AUTH` to the contents of the authentication file. Omit setting the `auth` property to use environment credentials.
+The user can alternatively specify the `fetch_auth` property at the root of the configuration file as a fallback if the `auth` property is not specified.
+
+In the case where it's not possible to store the credentials at a file path, use environment credentials instead. Set `GOOGLE_DRIVE_AUTH` to the contents of the authentication file. Omit setting the `auth` and `fetch_auth` properties to use environment credentials.
 
 ### Fetching an ArchieML Google Document as a JSON file
 
@@ -151,15 +155,7 @@ An example AWS IAM Policy configuration file (i.e. `example.aws-iam-policy.json`
 
 ## GitHub Pages deployment
 
-Create a configuration file. The file should have a `deployment` property with an object value. The value should include a `build` property. The value can also optionally include `branch` and `url` properties.
-
-- The `build` property will be used to determine which directory's content will be deployed to GitHub Pages.
-- The `branch` property specifies the branch to deploy to. If not specified, `gh-pages` is the default deployment branch.
-- The `url` property specifies the URL to deploy to. This should always take the form of `https://<organization>.github.io/<repository>` where `repository` is optional. Even if you are deploying to a custom domain through a `CNAME`, you should still specify the `url` as the bare `github.io` URL.
-
-Your `package.json` file will need a `build` script in the `scripts` property. Internally, `sink` will run the `build` script. You can skip the build process by adding a `--skip-build` or `-s` flag.
-
-Now you can deploy to GitHub Pages by running `pnpm sink deploy github`.
+`sink` v3 no longer supports deploying to GitHub Pages. Use a GitHub Actions workflow instead. If you need to run fetching commands, run them in the workflow using GitHub Secrets to store authentication environment variables.
 
 ## Troubleshooting
 

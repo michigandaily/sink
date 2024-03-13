@@ -45,21 +45,28 @@ export const fetchSheets = async ({ id, sheetId, output, auth, extension }) => {
     sheetQ = await sheet.spreadsheets.getByDataFilter({
       spreadsheetId: id,
       fields: "sheets(properties(title))",
-      requestBody: sheetId === undefined ? undefined : { dataFilters: [{ gridRange: { sheetId: sheetId } }] }
+      requestBody:
+        sheetId === undefined
+          ? undefined
+          : { dataFilters: [{ gridRange: { sheetId: sheetId } }] },
     });
   } catch (e) {
     fatal_error(`
-    Error when fetching sheet with spreadsheetId ${id}${sheetId === undefined ? "" : ` and sheetId ${sheetId}`}. Check the file identifer or your file access permissions.
+    Error when fetching sheet with spreadsheetId ${id}${
+      sheetId === undefined ? "" : ` and sheetId ${sheetId}`
+    }. Check the file identifer or your file access permissions.
     ${e.stack}
-    `)
+    `);
   }
 
-  const ranges = sheetQ.data.sheets.map(sheet => `'${sheet.properties.title}'`);
+  const ranges = sheetQ.data.sheets.map(
+    (sheet) => `'${sheet.properties.title}'`
+  );
 
   if (sheetId === undefined) {
     const nameQ = await sheet.spreadsheets.values.batchGet({
       spreadsheetId: id,
-      ranges
+      ranges,
     });
 
     nameQ.data.valueRanges.forEach(({ range, values }) => {
@@ -74,7 +81,7 @@ export const fetchSheets = async ({ id, sheetId, output, auth, extension }) => {
   } else {
     const nameQ = await sheet.spreadsheets.values.get({
       spreadsheetId: id,
-      range: ranges[0]
+      range: ranges[0],
     });
 
     const file = parse(nameQ, extname(output));
@@ -87,13 +94,18 @@ async function main(opts) {
   const { config } = await load_config(opts.config);
   config.fetch
     ?.filter((d) => d.type === "sheet" && has_filled_props(d))
-    .forEach(fetchSheets);
+    .forEach((file) => {
+      fetchSheets({
+        ...file,
+        auth: Object.hasOwn(file, "auth") ? file.auth : config.fetch_auth,
+      });
+    });
 }
 
 const self = fileURLToPath(import.meta.url);
 if (process.argv[1] === self) {
   program
-    .version("2.10.0")
+    .version("3.0.0")
     .option("-c, --config <path>", "path to config file")
     .parse();
 

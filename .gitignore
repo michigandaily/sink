@@ -7,7 +7,7 @@ yarn-error.log
 *.json
 *.config.js
 !example.aws-iam-policy.json
-!example.config.js
+!example.sink.config.js
 
 dist/*
 .env

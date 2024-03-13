@@ -1,8 +1,8 @@
 {
   "name": "sink",
-  "version": "2.10.0",
+  "version": "3.0.0",
   "description": "Helper scripts for The Michigan Daily",
-  "main": "src/sink.js",
+  "main": "./src/config.js",
   "bin": {
     "sink": "src/sink.js"
   },
@@ -34,5 +34,8 @@
     "html-entities": "^2.4.0",
     "htmlparser2": "^9.0.0",
     "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
   }
 }
