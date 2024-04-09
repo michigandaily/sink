@@ -14,6 +14,13 @@
  *      sheetId: string,
  *      output: string,
  *      auth?: string
+ *    } | 
+ *    {
+ *      type: "sheet",
+ *      id: string,
+ *      extension: ".json" | ".tsv" | ".csv",
+ *      output: string,
+ *      auth?: string
  *    }
  *  )[],
  *  deployment: {
