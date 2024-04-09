@@ -6,7 +6,7 @@ A collection of helper scripts that are used across The Michigan Daily's project
 
 ## Installation
 
-Run `pnpm install -D michigandaily/sink#v3.0.0` to get a pinned version. You can also use `yarn` or `npm`.
+Run `pnpm install -D michigandaily/sink#v3.0.1` to get a pinned version. You can also use `yarn` or `npm`.
 
 If you want to install the latest version, omit the version tag at the end of the library name (e.g., `michigandaily/sink`). This is not recommended in case of breaking changes.
 
