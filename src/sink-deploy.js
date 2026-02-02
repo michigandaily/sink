@@ -200,7 +200,7 @@ const main = async ([platform], opts) => {
       }
     };
 
-    if (Object.hasOwn(response, "Contents")) {
+    if (Object.hasOwn(response, "Contents") && response.Contents) {
       const content = response.Contents.filter(
         (d) => !d.Key.endsWith("/")
       ).sort((a, b) => depth(a.Key) - depth(b.Key));
