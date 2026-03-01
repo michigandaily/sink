@@ -6,6 +6,7 @@ yarn-error.log
 *.csv
 *.json
 *.config.js
+!package.json
 !example.aws-iam-policy.json
 !example.sink.config.js
 
